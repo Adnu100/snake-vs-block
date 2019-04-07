@@ -2,6 +2,7 @@ import gameinfo
 import objects_to_display as ob
 import sdl2
 import sdl2.ext as sdl
+from math import floor, sqrt
 
 class Gamewindow(sdl.Renderer):
     def __init__(self):
@@ -9,8 +10,8 @@ class Gamewindow(sdl.Renderer):
         sdl.Renderer.__init__(self, self.w)
 
     def __rendercircle(self, xc, yc):
-        for x in range(Snake.RADIUS): 
-            y = floor(sqrt(radius ** 2 - x ** 2))
+        for x in range(ob.Snake.RADIUS): 
+            y = floor(sqrt(ob.Snake.RADIUS ** 2 - x ** 2))
             self.draw_line((xc + x, yc + y, xc + x, yc - y))
             self.draw_line((xc - x, yc + y, xc - x, yc - y))
 
@@ -32,12 +33,12 @@ class Gamewindow(sdl.Renderer):
 
     def __renderblockrows(self, br):
         for row in br.row:
-            for b in range(Row.MAX_PER_ROW):
-                self.__renderblock(b, row[b], br.pos)
+            for b in range(ob.Row.MAX_PER_ROW):
+                self.__renderblock(b, row.a[b], row.pos)
 
     def rendersnake(self, snake):
-        self.__rendercolor = gameinfo.COLOR_GRID["red-blue"]
-        self.circle(snake.head[0], snake.head[1])
+        self.color = gameinfo.COLOR_GRID["red-blue"]
+        self.__rendercircle(snake.head[0], snake.head[1])
         for i in range(1, len(snake.a)):
             self.__rendercircle(snake.a[i][0], snake.a[i][1])
            
@@ -47,4 +48,30 @@ class Gamewindow(sdl.Renderer):
         br.advance(snake)
         snake.move()
 
+class Maingame:
+    def __init__(self):
+        self.r = Gamewindow()
+        self.snake = ob.Snake()
+        self.rows = ob.BlockRows()
+    def Start(self):
+        self.r.w.show()
+        i = 0
+        black = sdl.Color(0, 0, 0, 0)
+        gamecondition = True
+        while i < 50000 and gamecondition:
+            self.r.clear(black)
+            self.r.renderall(self.snake, self.rows)
+            if i % 10000 == 0:
+                self.rows.mountrow(self.snake)
+            e = sdl.get_events()
+            for ev in e:
+                if ev.type == sdl2.SDL_QUIT:
+                    gamecondition = False
+                    break
+            self.r.present()    
+
+if __name__ == '__main__':
+    Maingame().Start()
+
+            
 

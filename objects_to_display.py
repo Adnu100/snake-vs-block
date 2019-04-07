@@ -7,8 +7,8 @@ class Snake:
     RADIUS = 15
     SHOWABLE = ceil((gameinfo.WINDOW_HEIGHT - (gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)) / (RADIUS *  2))
     SPEED = 2
-    INITIAL_X = gameinfo.WINDOW_WIDTH / 2
-    INITIAL_Y = gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP
+    INITIAL_X = int(gameinfo.WINDOW_WIDTH / 2)
+    INITIAL_Y = int(gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)
     INITIAL_LENGTH = 6
     TOUCH = INITIAL_Y - RADIUS
 
@@ -28,12 +28,15 @@ class Snake:
         for _ in range(goodies):
             if len(self.a) > Snake.SHOWABLE:
                 break
-            self.__last = [self.__last[0], self.__last[1] + RADIUS * 2] 
+            self.__last = [self.__last[0], self.__last[1] + Snake.RADIUS * 2] 
             self.a.append(self.__last)
 
     def blast(self):
         if self.l != 0:
             self.l -= 1
+            if self.l > Snake.SHOWABLE: 
+                self.__last = [self.__last[0], self.__last[1] + RADIUS * 2] 
+                self.a.append(self.__last)
             self.a.remove(self.head)
             self.head = self.a[0]
             if self.l == 0:
@@ -52,15 +55,14 @@ class Snake:
 
 class Row:
     '''One row of blocks as an obstruction to snake'''
-    MAX_PER_ROW = 5
-    TOL = 10
-    SIZE = gameinfo.WINDOW_WIDTH / MAX_PER_ROW - TOL
+    MAX_PER_ROW = gameinfo.MAX_PER_ROW
 
     def __init__(self, free, lim):
         self.pos = 0
         self.passed = False
-        self.a = [random.randint(1, lim) if random.randint(1, 2) % 2 == 0 else 0 for _ in range(MAX_PER_ROW)]
-        self.a[free - 1] = 0
+        self.a = [random.randint(1, lim) if random.randint(1, 11) % 5 == 0 else 0 for _ in range(Row.MAX_PER_ROW)]
+        if free < 5:
+            self.a[free - 1] = 0     
 
 class BlockRows:
     '''The rows of blocks as an obstruction to snake'''
@@ -77,7 +79,7 @@ class BlockRows:
         self.row.append(Row(free, 5))
 
     def mountrow(self, s):
-        free = random.randint(1, 5)
+        free = random.randint(1, 10)
         self.row.append(Row(free, s.l))
 
     def deleterow(self):
@@ -86,16 +88,18 @@ class BlockRows:
     def advance(self, snake):
         for row in self.row:
             row.pos += snake.s
+            if row.pos > 900:
+                self.deleterow()
             if not row.passed:
                 if row.pos >  Snake.TOUCH:
                     row.passed = True
-                    #check snake collision and take necessary action here.... 
-                    #Also, the snake remains RADIUS units back after each blast, so take it forward instead of taking blocks backward
-                    #Also, no need to take a free block way out, the snake can pass with hitting the block. That is in factv the rreal intension.....
-
-
-
-
-
-
+                    for bk in range(MAX_PER_ROW):
+                        if row[bk] != 0:
+                            if BLOCKSTART[bk] < snake.head[0] < BLOCKEND[bk]:
+                                snake.blast()
+                                row[bk] -=  1
+                                return True
+                                break
+        return False
+                                
 
