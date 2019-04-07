@@ -1,65 +1,101 @@
-import sdl2
-import sdl2.ext as sdl
+import gameinfo
 import random
 from math import ceil
 
-WINDOW_WIDTH = 700
-WINDOW_HEIGHT = 900
-GAP = 80
-COLOR_GRID =     {   "black":sdl.Color(0, 0, 0, 0), 
-                     "white":sdl.Color(255, 255, 255, 0), 
-                     "red":sdl.Color(255, 0, 0, 0), 
-                     "green":sdl.Color(0, 255, 0, 0),
-                     "white-green":sdl.Color(190, 255, 190, 0),
-                     "blue":sdl.Color(0, 0, 255, 0),
-                     "blue-green":sdl.Color(0, 255, 255, 0)
-                 }
-
-
-class Snake():
+class Snake:
+    '''Snake class holding information about the snake displayed on the screen'''
     RADIUS = 15
-    SHOWABLE = ceil((WINDOW_HEIGHT - (WINDOW_HEIGHT / 2 + GAP)) / (RADIUS *  2))
+    SHOWABLE = ceil((gameinfo.WINDOW_HEIGHT - (gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)) / (RADIUS *  2))
     SPEED = 2
-    INITIAL_X = WINDOW_WIDTH / 2
-    INITIAL_Y = WINDOW_HEIGHT / 2 + GAP
+    INITIAL_X = gameinfo.WINDOW_WIDTH / 2
+    INITIAL_Y = gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP
     INITIAL_LENGTH = 6
+    TOUCH = INITIAL_Y - RADIUS
+
     def __init__(self):
         self.l = 1
-        self.head = [INITIAL_X, INITIAL_Y]
-        self.__a = [self.head]
-        self.s = SPEED
-        self.last = self.head
-        self.collect(INITIAL_LENGTH - 1)
+        self.head = [Snake.INITIAL_X, Snake.INITIAL_Y]
+        self.a = [self.head]
+        self.s = Snake.SPEED
+        self.__last = self.head
+        self.collect(Snake.INITIAL_LENGTH - 1)
+
     def __str__(self):
         return "Snake [size - " + str(self.l) + "]"
+
     def collect(self, goodies):
         self.l += goodies
         for _ in range(goodies):
-            if len(self.__a) > SHOWABLE:
+            if len(self.a) > Snake.SHOWABLE:
                 break
-            self.last = [self.last[0], self.last[1] + RADIUS * 2] 
-            self.__a.append(self.last)
+            self.__last = [self.__last[0], self.__last[1] + RADIUS * 2] 
+            self.a.append(self.__last)
+
     def blast(self):
         if self.l != 0:
             self.l -= 1
-            self.__a.remove(self.head)
+            self.a.remove(self.head)
             self.head = self.a[0]
             if self.l == 0:
-                self.head = self.last = None
+                self.head = self.__last = None
+
     def move(self):
-        st = len(self.__a) - 1
+        st = len(self.a) - 1
         while st > 0:
-            diff = self.__a[st - 1][0] - self.__a[st][0]
+            diff = self.a[st - 1][0] - self.a[st][0]
             if diff != 0:
                 if diff > 0:
-                    self.__a[st][0] += 1
+                    self.a[st][0] += 1
                 else:
-                    self.__a[st][0] -= 1        
+                    self.a[st][0] -= 1        
             st -= 1
 
-class BlockRow():
+class Row:
+    '''One row of blocks as an obstruction to snake'''
     MAX_PER_ROW = 5
     TOL = 10
-    SIZE = WINDOW_WIDTH / MAX_PER_ROW - TOL
-    COLORBLEACH = (COLOR_GRID["white-green"], COLOR_GRID["green"], COLOR_GRID["blue"], COLOR_GRID["blue-green"], COLOR_GRID["red"])
+    SIZE = gameinfo.WINDOW_WIDTH / MAX_PER_ROW - TOL
+
+    def __init__(self, free, lim):
+        self.pos = 0
+        self.passed = False
+        self.a = [random.randint(1, lim) if random.randint(1, 2) % 2 == 0 else 0 for _ in range(MAX_PER_ROW)]
+        self.a[free - 1] = 0
+
+class BlockRows:
+    '''The rows of blocks as an obstruction to snake'''
+    MAX_PER_ROW = Row.MAX_PER_ROW
+    def __init__(self):
+        self.row = []
+        self.__mountfirstrow()
+
+    def __str__(self):
+        return "A block row"
+
+    def __mountfirstrow(self):
+        free = random.randint(1, 5)
+        self.row.append(Row(free, 5))
+
+    def mountrow(self, s):
+        free = random.randint(1, 5)
+        self.row.append(Row(free, s.l))
+
+    def deleterow(self):
+        self.row.pop()
+
+    def advance(self, snake):
+        for row in self.row:
+            row.pos += snake.s
+            if not row.passed:
+                if row.pos >  Snake.TOUCH:
+                    row.passed = True
+                    #check snake collision and take necessary action here.... 
+                    #Also, the snake remains RADIUS units back after each blast, so take it forward instead of taking blocks backward
+                    #Also, no need to take a free block way out, the snake can pass with hitting the block. That is in factv the rreal intension.....
+
+
+
+
+
+
 
