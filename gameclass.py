@@ -8,6 +8,7 @@ class Gamewindow(sdl.Renderer):
     def __init__(self):
         self.w = sdl.Window("Adnesh's Snake vs Block Game", (gameinfo.WINDOW_WIDTH, gameinfo.WINDOW_HEIGHT))
         sdl.Renderer.__init__(self, self.w)
+        self.mode = gameinfo.BLOCK_IN_MOTION
 
     def __rendercircle(self, xc, yc):
         for x in range(ob.Snake.RADIUS): 
@@ -46,7 +47,10 @@ class Gamewindow(sdl.Renderer):
     def renderall(self, snake, br):
         self.__renderblockrows(br)
         self.rendersnake(snake)
-        br.advance(snake)
+        if self.mode == gameinfo.BLOCK_IN_MOTION:
+            self.mode = br.advance(snake)
+        else:
+            self.mode = snake.advance(br)
         snake.move()
 
 class Maingame:

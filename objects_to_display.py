@@ -6,7 +6,7 @@ class Snake:
     '''Snake class holding information about the snake displayed on the screen'''
     RADIUS = 15
     SHOWABLE = ceil((gameinfo.WINDOW_HEIGHT - (gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)) / (RADIUS *  2))
-    SPEED = 2
+    SPEED = gameinfo.INITIAL_SPEED
     INITIAL_X = int(gameinfo.WINDOW_WIDTH / 2)
     INITIAL_Y = int(gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)
     INITIAL_LENGTH = 6
@@ -61,9 +61,9 @@ class Row:
         self.pos = 0
         self.passed = False
         self.a = [random.randint(1, lim) if random.randint(1, 10) % 5 != 0 else 0 for _ in range(Row.MAX_PER_ROW)]
-        print(self.a)
         if free <= Row.MAX_PER_ROW:
             self.a[free - 1] = 0     
+        print(self.a)
 
 class BlockRows:
     '''The rows of blocks as an obstruction to snake'''
@@ -98,8 +98,8 @@ class BlockRows:
                             if gameinfo.BLOCKSTART[bk] < snake.head[0] < gameinfo.BLOCKEND[bk]:
                                 snake.blast()
                                 row.a[bk] -=  1
-                                return True
+                                return gameinfo.SNAKE_IN_MOTION
                                 break
-        return False
+        return gameinfo.BLOCK_IN_MOTION
                                 
 

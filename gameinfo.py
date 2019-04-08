@@ -3,6 +3,9 @@ import sdl2.ext as sdl
 WINDOW_WIDTH = 700
 WINDOW_HEIGHT = 900
 GAP = 80
+BLOCK_IN_MOTION = 0x0
+SNAKE_IN_MOTION = 0x1
+INITIAL_SPEED = 1
 COLOR_GRID =     {   "black":sdl.Color(0, 0, 0, 0), 
                      "white":sdl.Color(255, 255, 255, 0), 
                      "red":sdl.Color(255, 0, 0, 0), 
