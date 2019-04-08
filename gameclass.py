@@ -34,7 +34,8 @@ class Gamewindow(sdl.Renderer):
     def __renderblockrows(self, br):
         for row in br.row:
             for b in range(ob.Row.MAX_PER_ROW):
-                self.__renderblock(b, row.a[b], row.pos)
+                if row.a[b] != 0:
+                    self.__renderblock(b, row.a[b], row.pos)
 
     def rendersnake(self, snake):
         self.color = gameinfo.COLOR_GRID["red-blue"]
@@ -61,13 +62,24 @@ class Maingame:
         while i < 50000 and gamecondition:
             self.r.clear(black)
             self.r.renderall(self.snake, self.rows)
-            if i % 10000 == 0:
-                self.rows.mountrow(self.snake)
             e = sdl.get_events()
             for ev in e:
                 if ev.type == sdl2.SDL_QUIT:
                     gamecondition = False
                     break
+                elif ev.type == sdl2.SDL_KEYDOWN:
+                    k = ev.key.keysym.sym
+                    if k == sdl2.SDLK_SPACE:
+                        cond2 = True
+                        while cond2:
+                            extra = sdl.get_events()
+                            for ex in extra:
+                                if ex.type == sdl2.SDL_QUIT:
+                                    cond2 = False
+                                    gamecondition = False
+                                elif ex.type == sdl2.SDL_KEYDOWN:
+                                    if ex.key.keysym.sym == sdl2.SDLK_SPACE:
+                                        cond2 = False
             self.r.present()    
 
 if __name__ == '__main__':

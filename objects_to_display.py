@@ -60,13 +60,13 @@ class Row:
     def __init__(self, free, lim):
         self.pos = 0
         self.passed = False
-        self.a = [random.randint(1, lim) if random.randint(1, 11) % 5 == 0 else 0 for _ in range(Row.MAX_PER_ROW)]
-        if free < 5:
+        self.a = [random.randint(1, lim) if random.randint(1, 10) % 5 != 0 else 0 for _ in range(Row.MAX_PER_ROW)]
+        print(self.a)
+        if free <= Row.MAX_PER_ROW:
             self.a[free - 1] = 0     
 
 class BlockRows:
     '''The rows of blocks as an obstruction to snake'''
-    MAX_PER_ROW = Row.MAX_PER_ROW
     def __init__(self):
         self.row = []
         self.__mountfirstrow()
@@ -75,11 +75,11 @@ class BlockRows:
         return "A block row"
 
     def __mountfirstrow(self):
-        free = random.randint(1, 5)
-        self.row.append(Row(free, 5))
+        free = random.randint(1, 6)
+        self.row.append(Row(free, 6))
 
     def mountrow(self, s):
-        free = random.randint(1, 10)
+        free = random.randint(1, Row.MAX_PER_ROW * 2)
         self.row.append(Row(free, s.l))
 
     def deleterow(self):
@@ -93,11 +93,11 @@ class BlockRows:
             if not row.passed:
                 if row.pos >  Snake.TOUCH:
                     row.passed = True
-                    for bk in range(MAX_PER_ROW):
-                        if row[bk] != 0:
-                            if BLOCKSTART[bk] < snake.head[0] < BLOCKEND[bk]:
+                    for bk in range(Row.MAX_PER_ROW):
+                        if row.a[bk] != 0:
+                            if gameinfo.BLOCKSTART[bk] < snake.head[0] < gameinfo.BLOCKEND[bk]:
                                 snake.blast()
-                                row[bk] -=  1
+                                row.a[bk] -=  1
                                 return True
                                 break
         return False
