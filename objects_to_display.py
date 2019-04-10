@@ -17,8 +17,10 @@ class Snake:
         self.head = [Snake.INITIAL_X, Snake.INITIAL_Y]
         self.a = [self.head]
         self.s = Snake.SPEED
+        self.showable = Snake.SHOWABLE
         self.__last = self.head
         self.collect(Snake.INITIAL_LENGTH - 1)
+        self.moving = []
 
     def __str__(self):
         return "Snake [size - " + str(self.l) + "]"
@@ -26,23 +28,27 @@ class Snake:
     def collect(self, goodies):
         self.l += goodies
         for _ in range(goodies):
-            if len(self.a) > Snake.SHOWABLE:
-                break
             self.__last = [self.__last[0], self.__last[1] + Snake.RADIUS * 2] 
             self.a.append(self.__last)
 
     def blast(self):
         if self.l != 0:
             self.l -= 1
-            if self.l > Snake.SHOWABLE: 
-                self.__last = [self.__last[0], self.__last[1] + RADIUS * 2] 
-                self.a.append(self.__last)
             self.a.remove(self.head)
-            self.head = self.a[0]
             if self.l == 0:
                 self.head = self.__last = None
+            else:
+                self.head = self.a[0]
 
-    def move(self):
+    def move(self, direction):
+        if direction:
+            for i in range(len(self.a)):
+                self.a[i][0] -= (Snake.RADIUS - i)
+        else:
+            for i in range(len(self.a)):
+                self.a[i][0] += (Snake.RADIUS - i)
+        
+    def adjust(self):
         st = len(self.a) - 1
         while st > 0:
             diff = self.a[st - 1][0] - self.a[st][0]
@@ -50,8 +56,33 @@ class Snake:
                 if diff > 0:
                     self.a[st][0] += 1
                 else:
-                    self.a[st][0] -= 1        
+                    self.a[st][0] -= 1
+                break
             st -= 1
+
+    def advance(self, brs):
+        if self.l == 0:
+            return gameinfo.GAME_OVER
+        mode = gameinfo.SNAKE_IN_MOTION
+        if (self.head[1] - self.s) <= Snake.INITIAL_Y:
+            dist = self.head[1] - Snake.INITIAL_Y
+            mode = gameinfo.BLOCK_IN_MOTION
+        else:
+            dist = self.s
+        for body in self.a:
+            body[1] -= dist
+        for r in brs.row:
+            if not r.passed:
+                if (self.head[1] - Snake.RADIUS) <= r.pos:
+                    for bk in range(len(r.a)):
+                        if gameinfo.BLOCKSTART[bk] < self.head[0] < gameinfo.BLOCKEND[bk]:
+                            if r.a[bk] != 0:
+                                self.blast()
+                                r.a[bk] -= 1
+                                return gameinfo.SNAKE_IN_MOTION
+                            else:
+                                r.passed = True
+        return mode
 
 class Row:
     '''One row of blocks as an obstruction to snake'''
@@ -80,24 +111,28 @@ class BlockRows:
 
     def mountrow(self, s):
         free = random.randint(1, Row.MAX_PER_ROW * 2)
-        self.row.append(Row(free, s.l))
+        self.row.insert(0, Row(free, s.l))
 
     def deleterow(self):
         self.row.pop()
 
     def advance(self, snake):
+        if snake.l == 0:
+            return gameinfo.GAME_OVER
         for row in self.row:
             row.pos += snake.s
-            if row.pos > 900:
+            if row.pos > (900 + gameinfo.BLOCKSIZE):
                 self.deleterow()
+                self.mountrow(snake)
             if not row.passed:
-                if row.pos >  Snake.TOUCH:
+                if row.pos > Snake.TOUCH:
                     row.passed = True
                     for bk in range(Row.MAX_PER_ROW):
                         if row.a[bk] != 0:
                             if gameinfo.BLOCKSTART[bk] < snake.head[0] < gameinfo.BLOCKEND[bk]:
                                 snake.blast()
                                 row.a[bk] -=  1
+                                row.passed = False
                                 return gameinfo.SNAKE_IN_MOTION
                                 break
         return gameinfo.BLOCK_IN_MOTION

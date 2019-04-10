@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import gameinfo
 import objects_to_display as ob
 import sdl2
@@ -7,6 +9,7 @@ from math import floor, sqrt
 class Gamewindow(sdl.Renderer):
     def __init__(self):
         self.w = sdl.Window("Adnesh's Snake vs Block Game", (gameinfo.WINDOW_WIDTH, gameinfo.WINDOW_HEIGHT))
+        self.i = 0
         sdl.Renderer.__init__(self, self.w)
         self.mode = gameinfo.BLOCK_IN_MOTION
 
@@ -40,18 +43,20 @@ class Gamewindow(sdl.Renderer):
 
     def rendersnake(self, snake):
         self.color = gameinfo.COLOR_GRID["red-blue"]
-        self.__rendercircle(snake.head[0], snake.head[1])
-        for i in range(1, len(snake.a)):
+        for i in range(0, len(snake.a)):
             self.__rendercircle(snake.a[i][0], snake.a[i][1])
+            if i > ob.Snake.SHOWABLE:
+                break
            
-    def renderall(self, snake, br):
+    def renderall(self, snake, br, adjustenabled):
         self.__renderblockrows(br)
         self.rendersnake(snake)
         if self.mode == gameinfo.BLOCK_IN_MOTION:
             self.mode = br.advance(snake)
         else:
             self.mode = snake.advance(br)
-        snake.move()
+        if adjustenabled:
+            snake.adjust()
 
 class Maingame:
     def __init__(self):
@@ -61,11 +66,13 @@ class Maingame:
     def Start(self):
         self.r.w.show()
         i = 0
+        ad = True
         black = sdl.Color(0, 0, 0, 0)
         gamecondition = True
         while i < 50000 and gamecondition:
             self.r.clear(black)
-            self.r.renderall(self.snake, self.rows)
+            self.r.renderall(self.snake, self.rows, ad)
+            ad = True
             e = sdl.get_events()
             for ev in e:
                 if ev.type == sdl2.SDL_QUIT:
@@ -73,6 +80,7 @@ class Maingame:
                     break
                 elif ev.type == sdl2.SDL_KEYDOWN:
                     k = ev.key.keysym.sym
+                    ad = False
                     if k == sdl2.SDLK_SPACE:
                         cond2 = True
                         while cond2:
@@ -84,10 +92,18 @@ class Maingame:
                                 elif ex.type == sdl2.SDL_KEYDOWN:
                                     if ex.key.keysym.sym == sdl2.SDLK_SPACE:
                                         cond2 = False
+                    elif k == sdl2.SDLK_LEFT:
+                        self.snake.move(True)
+                    elif k == sdl2.SDLK_RIGHT:
+                        self.snake.move(False)
+                    break
+            #if self.snake.l < 2:
+            #    self.snake.collect(20)
             self.r.present()    
 
 if __name__ == '__main__':
-    Maingame().Start()
+    i = Maingame()
+    i.Start()
 
             
 
