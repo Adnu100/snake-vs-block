@@ -67,6 +67,7 @@ class Maingame:
         self.r.w.show()
         i = 0
         ad = True
+        self.snake.collect(50)
         black = sdl.Color(0, 0, 0, 0)
         gamecondition = True
         while i < 50000 and gamecondition:
@@ -97,13 +98,22 @@ class Maingame:
                     elif k == sdl2.SDLK_RIGHT:
                         self.snake.move(False)
                     break
-            #if self.snake.l < 2:
-            #    self.snake.collect(20)
-            self.r.present()    
+            if self.snake.l < 2:
+                self.snake.collect(20)
+            self.r.present()
+            i += 1
+
+def StartGame():
+    sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING)
+    sdl.init()
+    Maingame().Start()
+    sdl.quit()
+    sdl2.SDL_Quit()
 
 if __name__ == '__main__':
-    i = Maingame()
-    i.Start()
+    StartGame()
+    #i = Maingame()
+    #i.Start()
 
             
 
