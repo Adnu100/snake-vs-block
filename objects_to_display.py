@@ -20,7 +20,7 @@ class Snake:
         self.showable = Snake.SHOWABLE
         self.__last = self.head
         self.collect(Snake.INITIAL_LENGTH - 1)
-        self.moving = []
+        self.__moverow = 0
 
     def __str__(self):
         return "Snake [size - " + str(self.l) + "]"
@@ -42,23 +42,28 @@ class Snake:
 
     def move(self, direction):
         if direction:
-            for i in range(len(self.a)):
-                self.a[i][0] -= (Snake.RADIUS - i)
+            self.head[0] -= Snake.RADIUS
         else:
-            for i in range(len(self.a)):
-                self.a[i][0] += (Snake.RADIUS - i)
-        
-    def adjust(self):
-        st = len(self.a) - 1
-        while st > 0:
-            diff = self.a[st - 1][0] - self.a[st][0]
+            self.head[0] += Snake.RADIUS
+
+    def adjust(self, plusmove):
+        self.__moverow += plusmove
+        checked = 0
+        i = 0
+        for i in range(len(self.a) - 1):
+            diff = self.a[i][0] - self.a[i + 1][0]
             if diff != 0:
                 if diff > 0:
-                    self.a[st][0] += 1
+                    self.a[i + 1][0] += Snake.RADIUS
                 else:
-                    self.a[st][0] -= 1
-                break
-            st -= 1
+                    self.a[i + 1][0] -= Snake.RADIUS
+                checked += 1
+                if checked == self.__moverow:
+                    break
+        if i == len(self.a) - 1:
+            self.__moverow -= 1
+            if self.__moverow < 0:
+                self.__moverow = 0
 
     def advance(self, brs):
         if self.l == 0:
@@ -94,7 +99,6 @@ class Row:
         self.a = [random.randint(1, lim) if random.randint(1, 10) % 5 != 0 else 0 for _ in range(Row.MAX_PER_ROW)]
         if free <= Row.MAX_PER_ROW:
             self.a[free - 1] = 0     
-        print(self.a)
 
 class BlockRows:
     '''The rows of blocks as an obstruction to snake'''
@@ -123,7 +127,6 @@ class BlockRows:
             row.pos += snake.s
             if row.pos > (900 + gameinfo.BLOCKSIZE):
                 self.deleterow()
-                self.mountrow(snake)
             if not row.passed:
                 if row.pos > Snake.TOUCH:
                     row.passed = True

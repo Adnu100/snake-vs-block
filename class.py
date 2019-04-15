@@ -4,6 +4,7 @@ import gameinfo
 import objects_to_display as ob
 import sdl2
 import sdl2.ext as sdl
+import random
 from math import floor, sqrt
 
 class Gamewindow(sdl.Renderer):
@@ -48,15 +49,14 @@ class Gamewindow(sdl.Renderer):
             if i > ob.Snake.SHOWABLE:
                 break
            
-    def renderall(self, snake, br, adjustenabled):
+    def renderall(self, snake, br):
         self.__renderblockrows(br)
         self.rendersnake(snake)
         if self.mode == gameinfo.BLOCK_IN_MOTION:
             self.mode = br.advance(snake)
         else:
             self.mode = snake.advance(br)
-        if adjustenabled:
-            snake.adjust()
+        snake.adjust(True)
 
 class Maingame:
     def __init__(self):
@@ -65,43 +65,39 @@ class Maingame:
         self.rows = ob.BlockRows()
     def Start(self):
         self.r.w.show()
+        Running = True
         i = 0
-        ad = True
-        self.snake.collect(50)
-        black = sdl.Color(0, 0, 0, 0)
-        gamecondition = True
-        while i < 50000 and gamecondition:
-            self.r.clear(black)
-            self.r.renderall(self.snake, self.rows, ad)
-            ad = True
-            e = sdl.get_events()
-            for ev in e:
-                if ev.type == sdl2.SDL_QUIT:
-                    gamecondition = False
-                    break
-                elif ev.type == sdl2.SDL_KEYDOWN:
-                    k = ev.key.keysym.sym
-                    ad = False
-                    if k == sdl2.SDLK_SPACE:
-                        cond2 = True
-                        while cond2:
-                            extra = sdl.get_events()
-                            for ex in extra:
-                                if ex.type == sdl2.SDL_QUIT:
-                                    cond2 = False
-                                    gamecondition = False
-                                elif ex.type == sdl2.SDL_KEYDOWN:
-                                    if ex.key.keysym.sym == sdl2.SDLK_SPACE:
-                                        cond2 = False
-                    elif k == sdl2.SDLK_LEFT:
-                        self.snake.move(True)
-                    elif k == sdl2.SDLK_RIGHT:
-                        self.snake.move(False)
-                    break
-            if self.snake.l < 2:
-                self.snake.collect(20)
-            self.r.present()
+        lim = random.randint(gameinfo.BLOCKSIZE, 900)
+        while Running:
             i += 1
+            self.r.clear(gameinfo.COLOR_GRID["black"])
+            self.r.renderall(self.snake, self.rows)
+            events = sdl.get_events()
+            for e in events:
+                if e.type == sdl2.SDL_QUIT:
+                    Running = False
+                    break
+                elif e.type == sdl2.SDL_KEYDOWN:
+                    k = e.key.keysym.sym
+                    if k == sdl2.SDLK_SPACE:
+                        while Running:
+                            events_ext = sdl.get_events()
+                            for e in events_ext:
+                                if e.type == sdl2.SDL_KEYDOWN:
+                                    Running = False
+                                    break
+                        Running = True
+                    elif k == sdl2.SDLK_RIGHT:
+                        if self.snake.l != 0:
+                            self.snake.move(False)
+                    elif k == sdl2.SDLK_LEFT:
+                        if self.snake.l != 0:
+                            self.snake.move(True)
+            self.r.present()
+            if self.rows.row[0].pos > lim:
+                self.rows.mountrow(self.snake)
+                lim = random.randint(gameinfo.BLOCKSIZE, 900)
+        self.r.w.hide()
 
 def StartGame():
     sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING)
