@@ -63,6 +63,8 @@ class Gamewindow(sdl.Renderer):
             self.mode = br.advance(snake)
             for gd in g:
                 gd.pos += snake.s
+                if gd.pos > gameinfo.WINDOW_HEIGHT:
+                    g.remove(gd)
         else:
             self.mode = snake.advance(br)
         snake.adjust(True)
@@ -113,6 +115,19 @@ class Maingame:
                 self.g.append(goody)
             if self.snake.l == 1:
                 self.snake.collect(6)
+            for h in self.g:
+                if h.pos != self.snake.head[1]:
+                    continue
+                for c in range(len(h.co)):
+                    if h.co[c] == self.snake.head[0]:
+                        val = h.val[c]
+                        h.co.remove(h.co[c])
+                        h.val.remove(h.val[c])
+                        self.snake.collect(val)
+                        h.num -= 1
+                        if h.num == 0:
+                            self.g.remove(h)
+                        break
         self.r.w.hide()
 
 def StartGame():

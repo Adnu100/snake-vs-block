@@ -5,6 +5,7 @@ from math import ceil
 class Snake:
     '''Snake class holding information about the snake displayed on the screen'''
     RADIUS = gameinfo.SNAKERADIUS
+    DIAMETER = RADIUS * 2
     SHOWABLE = ceil((gameinfo.WINDOW_HEIGHT - (gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)) / (RADIUS *  2))
     SPEED = gameinfo.INITIAL_SPEED
     INITIAL_X = int(gameinfo.WINDOW_WIDTH / 2)
@@ -92,11 +93,14 @@ class Snake:
 
 class Goody:
     '''Goodies which the snake would collect and eat to increase it's length'''
+    __LEFT = Snake.INITIAL_X // Snake.DIAMETER + 1
+    __RIGHT = (gameinfo.WINDOW_WIDTH - Snake.INITIAL_X) // Snake.DIAMETER + 1
+
     def __init__(self, n):
         self.num = n
         self.pos = 0
         self.val = [random.randint(1, 10) for _ in range(n)]
-        self.co = [random.randint(0, gameinfo.WINDOW_WIDTH) for _ in range(n)]
+        self.co = [Snake.INITIAL_X + random.randint(0, Goody.__RIGHT) * Snake.DIAMETER if random.randint(1, 2) == 1 else Snake.INITIAL_X - random.randint(0, Goody.__LEFT) * Snake.DIAMETER for _ in range(n)]
 
 class Row:
     '''One row of blocks as an obstruction to snake'''
