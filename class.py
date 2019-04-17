@@ -14,9 +14,9 @@ class Gamewindow(sdl.Renderer):
         sdl.Renderer.__init__(self, self.w)
         self.mode = gameinfo.BLOCK_IN_MOTION
 
-    def __rendercircle(self, xc, yc):
-        for x in range(ob.Snake.RADIUS): 
-            y = floor(sqrt(ob.Snake.RADIUS ** 2 - x ** 2))
+    def __rendercircle(self, xc, yc, r = ob.Snake.RADIUS):
+        for x in range(r): 
+            y = floor(sqrt(r ** 2 - x ** 2))
             self.draw_line((xc + x, yc + y, xc + x, yc - y))
             self.draw_line((xc - x, yc + y, xc - x, yc - y))
 
@@ -48,12 +48,21 @@ class Gamewindow(sdl.Renderer):
             self.__rendercircle(snake.a[i][0], snake.a[i][1])
             if i > ob.Snake.SHOWABLE:
                 break
+
+    def rendergoodies(self, g_row):
+        self.color = sdl.Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 0)
+        for r in g_row:
+            for g in range(r.num):
+                self.__rendercircle(r.co[g], r.pos, gameinfo.BONUSRADIUS)
            
-    def renderall(self, snake, br):
+    def renderall(self, snake, br, g):
         self.__renderblockrows(br)
         self.rendersnake(snake)
+        self.rendergoodies(g)
         if self.mode == gameinfo.BLOCK_IN_MOTION:
             self.mode = br.advance(snake)
+            for gd in g:
+                gd.pos += snake.s
         else:
             self.mode = snake.advance(br)
         snake.adjust(True)
@@ -63,6 +72,7 @@ class Maingame:
         self.r = Gamewindow()
         self.snake = ob.Snake()
         self.rows = ob.BlockRows()
+        self.g = []
     def Start(self):
         self.r.w.show()
         Running = True
@@ -71,7 +81,7 @@ class Maingame:
         while Running:
             i += 1
             self.r.clear(gameinfo.COLOR_GRID["black"])
-            self.r.renderall(self.snake, self.rows)
+            self.r.renderall(self.snake, self.rows, self.g)
             events = sdl.get_events()
             for e in events:
                 if e.type == sdl2.SDL_QUIT:
@@ -88,15 +98,21 @@ class Maingame:
                                     break
                         Running = True
                     elif k == sdl2.SDLK_RIGHT:
-                        if self.snake.l != 0:
+                        if self.snake.l != 0 and self.snake.head[0] < (gameinfo.WINDOW_WIDTH - 2 * ob.Snake.RADIUS):
                             self.snake.move(False)
-                    elif k == sdl2.SDLK_LEFT:
+                    elif k == sdl2.SDLK_LEFT and self.snake.head[0] > (0 + 2 * ob.Snake.RADIUS):
                         if self.snake.l != 0:
                             self.snake.move(True)
             self.r.present()
             if self.rows.row[0].pos > lim:
                 self.rows.mountrow(self.snake)
-                lim = random.randint(gameinfo.BLOCKSIZE, 900)
+                lim = random.randint(gameinfo.BLOCKSIZE, 900) + gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS
+            random.seed(random.random())
+            if random.randint(1, 1000) == random.randint(1, 1000) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
+                goody = ob.Goody(random.randint(1, 3))
+                self.g.append(goody)
+            if self.snake.l == 1:
+                self.snake.collect(6)
         self.r.w.hide()
 
 def StartGame():

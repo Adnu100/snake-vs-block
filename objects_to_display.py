@@ -4,13 +4,14 @@ from math import ceil
 
 class Snake:
     '''Snake class holding information about the snake displayed on the screen'''
-    RADIUS = 15
+    RADIUS = gameinfo.SNAKERADIUS
     SHOWABLE = ceil((gameinfo.WINDOW_HEIGHT - (gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)) / (RADIUS *  2))
     SPEED = gameinfo.INITIAL_SPEED
     INITIAL_X = int(gameinfo.WINDOW_WIDTH / 2)
     INITIAL_Y = int(gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)
     INITIAL_LENGTH = 6
     TOUCH = INITIAL_Y - RADIUS
+    MOVING_SPEED = 2 * RADIUS
 
     def __init__(self):
         self.l = 1
@@ -42,9 +43,9 @@ class Snake:
 
     def move(self, direction):
         if direction:
-            self.head[0] -= Snake.RADIUS
+            self.head[0] -= Snake.MOVING_SPEED
         else:
-            self.head[0] += Snake.RADIUS
+            self.head[0] += Snake.MOVING_SPEED
 
     def adjust(self, plusmove):
         self.__moverow += plusmove
@@ -88,6 +89,14 @@ class Snake:
                             else:
                                 r.passed = True
         return mode
+
+class Goody:
+    '''Goodies which the snake would collect and eat to increase it's length'''
+    def __init__(self, n):
+        self.num = n
+        self.pos = 0
+        self.val = [random.randint(1, 10) for _ in range(n)]
+        self.co = [random.randint(0, gameinfo.WINDOW_WIDTH) for _ in range(n)]
 
 class Row:
     '''One row of blocks as an obstruction to snake'''
