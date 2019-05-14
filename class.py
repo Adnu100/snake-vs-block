@@ -89,7 +89,7 @@ class Maingame:
                 if e.type == sdl2.SDL_QUIT:
                     Running = False
                     break
-                elif e.type == sdl2.SDL_KEYDOWN:
+                elif e.type == sdl2.SDL_KEYDOWN and self.snake.head != None:
                     k = e.key.keysym.sym
                     if k == sdl2.SDLK_SPACE:
                         while Running:
@@ -113,21 +113,22 @@ class Maingame:
             if random.randint(1, 1000) == random.randint(1, 1000) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
                 goody = ob.Goody(random.randint(1, 3))
                 self.g.append(goody)
-            if self.snake.l == 1:
-                self.snake.collect(6)
-            for h in self.g:
-                if h.pos != self.snake.head[1]:
-                    continue
-                for c in range(len(h.co)):
-                    if h.co[c] == self.snake.head[0]:
-                        val = h.val[c]
-                        h.co.remove(h.co[c])
-                        h.val.remove(h.val[c])
-                        self.snake.collect(val)
-                        h.num -= 1
-                        if h.num == 0:
-                            self.g.remove(h)
-                        break
+            #if self.snake.l == 1:
+            #    self.snake.collect(6)
+            if self.snake.head != None:
+                for h in self.g:
+                    if h.pos != self.snake.head[1]:
+                        continue
+                    for c in range(len(h.co)):
+                        if h.co[c] == self.snake.head[0]:
+                            val = h.val[c]
+                            h.co.remove(h.co[c])
+                            h.val.remove(h.val[c])
+                            self.snake.collect(val)
+                            h.num -= 1
+                            if h.num == 0:
+                                self.g.remove(h)
+                            break
         self.r.w.hide()
 
 def StartGame():
