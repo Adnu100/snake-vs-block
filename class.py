@@ -81,6 +81,8 @@ class Maingame:
         i = 0
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
         while Running:
+            if self.snake.head == None:
+                Running =  False
             i += 1
             self.r.clear(gameinfo.COLOR_GRID["black"])
             self.r.renderall(self.snake, self.rows, self.g)
