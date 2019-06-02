@@ -68,7 +68,7 @@ class Gamewindow(sdl.Renderer):
                     g.remove(gd)
         else:
             self.mode = snake.advance(br)
-        snake.adjust(True)
+        snake.adjust()
 
 class Maingame:
     def __init__(self):
@@ -110,13 +110,14 @@ class Maingame:
                         if self.snake.l != 0:
                             self.snake.move(True)
             self.r.present()
-            if self.rows.row and self.rows.row[0].pos > lim:
-                self.rows.mountrow(self.snake)
-                lim = random.randint(gameinfo.BLOCKSIZE, 900) + gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS
-            random.seed(random.random())
-            if random.randint(1, 1000) == random.randint(1, 1000) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
-                goody = ob.Goody(random.randint(1, 3))
-                self.g.append(goody)
+            if self.rows.row:
+                if self.rows.row[0].pos > lim:
+                    self.rows.mountrow(self.snake)
+                    lim = random.randint(gameinfo.BLOCKSIZE, 900) + gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS
+                random.seed(random.random())
+                if random.randint(1, 1000) == random.randint(1, 1000) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
+                    goody = ob.Goody(random.randint(1, 3))
+                    self.g.append(goody)
             if len(sys.argv) > 1 and sys.argv[1] == "-check":
                 if self.snake.l == 1:
                     self.snake.collect(6)
@@ -134,9 +135,10 @@ class Maingame:
                             if h.num == 0:
                                 self.g.remove(h)
                             break
-            #delay = sdl2.SDL_GetTicks() - C
+            delay = sdl2.SDL_GetTicks() - C
             #print(sdl2.SDL_GetTicks() - C)
-            #sdl2.SDL_Delay(delay)
+            if delay < 6:
+                sdl2.SDL_Delay(6 - delay)
         self.r.w.hide()
 
 def StartGame():

@@ -48,10 +48,9 @@ class Snake:
         else:
             self.head[0] += Snake.MOVING_SPEED
 
-    def adjust(self, plusmove):
-        if plusmove:
-            for i in range(1, len(self.a)):
-                self.a[i][0] = self.a[0][0]
+    def adjust(self):
+        for i in range(1, len(self.a)):
+            self.a[i][0] = self.a[0][0]
         #self.__moverow += plusmove
         #checked = 0
         #i = 0

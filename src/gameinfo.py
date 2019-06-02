@@ -6,7 +6,7 @@ GAP = 80
 BLOCK_IN_MOTION = 0x0
 SNAKE_IN_MOTION = 0x1
 GAME_OVER = 0x2
-INITIAL_SPEED = 1
+INITIAL_SPEED = 2 
 COLOR_GRID =     {   "black":sdl.Color(0, 0, 0, 0), 
                      "white":sdl.Color(255, 255, 255, 0), 
                      "red":sdl.Color(255, 0, 0, 0), 
