@@ -108,7 +108,7 @@ class Maingame:
                         if self.snake.l != 0:
                             self.snake.move(True)
             self.r.present()
-            if self.rows.row[0].pos > lim:
+            if self.rows.row and self.rows.row[0].pos > lim:
                 self.rows.mountrow(self.snake)
                 lim = random.randint(gameinfo.BLOCKSIZE, 900) + gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS
             random.seed(random.random())

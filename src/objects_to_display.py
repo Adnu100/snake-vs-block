@@ -49,23 +49,26 @@ class Snake:
             self.head[0] += Snake.MOVING_SPEED
 
     def adjust(self, plusmove):
-        self.__moverow += plusmove
-        checked = 0
-        i = 0
-        for i in range(len(self.a) - 1):
-            diff = self.a[i][0] - self.a[i + 1][0]
-            if diff != 0:
-                if diff > 0:
-                    self.a[i + 1][0] += Snake.RADIUS
-                else:
-                    self.a[i + 1][0] -= Snake.RADIUS
-                checked += 1
-                if checked == self.__moverow:
-                    break
-        if i == len(self.a) - 1:
-            self.__moverow -= 1
-            if self.__moverow < 0:
-                self.__moverow = 0
+        if plusmove:
+            for i in range(1, len(self.a)):
+                self.a[i][0] = self.a[0][0]
+        #self.__moverow += plusmove
+        #checked = 0
+        #i = 0
+        #for i in range(len(self.a) - 1):
+        #    diff = self.a[i][0] - self.a[i + 1][0]
+        #    if diff != 0:
+        #        if diff > 0:
+        #            self.a[i + 1][0] += Snake.RADIUS
+        #        else:
+        #            self.a[i + 1][0] -= Snake.RADIUS
+        #        checked += 1
+        #        if checked == self.__moverow:
+        #            break
+        #if i == len(self.a) - 1:
+        #    self.__moverow -= 1
+        #    if self.__moverow < 0:
+        #        self.__moverow = 0
 
     def advance(self, brs):
         if self.l == 0:
