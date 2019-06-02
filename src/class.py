@@ -5,6 +5,7 @@ import objects_to_display as ob
 import sdl2
 import sdl2.ext as sdl
 import random
+import sys
 from math import floor, sqrt
 
 class Gamewindow(sdl.Renderer):
@@ -81,6 +82,7 @@ class Maingame:
         i = 0
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
         while Running:
+            C = sdl2.SDL_GetTicks()
             if self.snake.head == None:
                 Running =  False
             i += 1
@@ -115,8 +117,9 @@ class Maingame:
             if random.randint(1, 1000) == random.randint(1, 1000) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
                 goody = ob.Goody(random.randint(1, 3))
                 self.g.append(goody)
-            #if self.snake.l == 1:
-            #    self.snake.collect(6)
+            if len(sys.argv) > 1 and sys.argv[1] == "-check":
+                if self.snake.l == 1:
+                    self.snake.collect(6)
             if self.snake.head != None:
                 for h in self.g:
                     if h.pos != self.snake.head[1]:
@@ -131,6 +134,9 @@ class Maingame:
                             if h.num == 0:
                                 self.g.remove(h)
                             break
+            #delay = sdl2.SDL_GetTicks() - C
+            #print(sdl2.SDL_GetTicks() - C)
+            #sdl2.SDL_Delay(delay)
         self.r.w.hide()
 
 def StartGame():
