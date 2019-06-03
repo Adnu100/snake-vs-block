@@ -11,7 +11,9 @@ from math import floor, sqrt
 
 class Gamewindow(sdl.Renderer):
     YELLOW = sdl2.SDL_Color(255, 255, 0, 0)
-    Rscore = sdl2.SDL_Rect(0, 0, 250, 90)
+    WHITE = sdl2.SDL_Color(255, 255, 255, 0)
+    BLACK = sdl2.SDL_Color(0, 0, 0, 0)
+    Rscore = sdl2.SDL_Rect(0, 0, 250, 50)
 
     def __init__(self):
         self.w = sdl.Window("Adnesh's Snake vs Block Game", (gameinfo.WINDOW_WIDTH, gameinfo.WINDOW_HEIGHT))
@@ -38,9 +40,14 @@ class Gamewindow(sdl.Renderer):
         else:
             self.color = gameinfo.COLOR_GRID["red"]
         sx = gameinfo.BLOCKSTART[number]
-        ex = gameinfo.BLOCKEND[number]
-        for i in range(gameinfo.BLOCKSIZE):
-            self.draw_line((sx, y - i, ex, y - i))
+        self.fill((sx, y - gameinfo.BLOCKSIZE, gameinfo.BLOCKSIZE, gameinfo.BLOCKSIZE))
+        texttodisplay = "%2d" %val
+        sur = ttf.TTF_RenderText_Solid(self.t, texttodisplay.encode(), self.BLACK)
+        tex = sdl2.SDL_CreateTextureFromSurface(self.sdlrenderer, sur)
+        Rblock = sdl2.SDL_Rect(sx + gameinfo.RECTSTART_X, y - gameinfo.RECTSTART_Y, gameinfo.RECTWIDTH, gameinfo.RECTHEIGHT)
+        sdl2.SDL_RenderCopy(self.sdlrenderer, tex, None, Rblock)
+        sdl2.SDL_FreeSurface(sur)
+        sdl2.SDL_DestroyTexture(tex)
 
     def __renderblockrows(self, br):
         for row in br.row:
@@ -49,11 +56,18 @@ class Gamewindow(sdl.Renderer):
                     self.__renderblock(b, row.a[b], row.pos)
 
     def rendersnake(self, snake):
-        self.color = gameinfo.COLOR_GRID["red-blue"]
-        for i in range(0, len(snake.a)):
-            self.__rendercircle(snake.a[i][0], snake.a[i][1])
-            if i > ob.Snake.SHOWABLE:
-                break
+        if snake.l > 0:
+            self.color = gameinfo.COLOR_GRID["red-blue"]
+            for i in range(0, len(snake.a)):
+                self.__rendercircle(snake.a[i][0], snake.a[i][1])
+                if i > ob.Snake.SHOWABLE:
+                    break
+            sur = ttf.TTF_RenderText_Solid(self.t, snake.l.__str__().encode(), self.WHITE)
+            tex = sdl2.SDL_CreateTextureFromSurface(self.sdlrenderer, sur)
+            Rsnake = sdl2.SDL_Rect(snake.head[0] - gameinfo.TSPACE_X, snake.head[1] - gameinfo.TSPACE_Y, gameinfo.TWIDTH, gameinfo.THEIGHT)
+            sdl2.SDL_RenderCopy(self.sdlrenderer, tex, None, Rsnake)
+            sdl2.SDL_FreeSurface(sur)
+            sdl2.SDL_DestroyTexture(tex)
 
     def rendergoodies(self, g_row):
         self.color = sdl.Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 0)
@@ -89,6 +103,7 @@ class Maingame:
         self.snake = ob.Snake()
         self.rows = ob.BlockRows()
         self.g = []
+
     def Start(self):
         self.r.w.show()
         Running = True
@@ -127,9 +142,9 @@ class Maingame:
             if self.rows.row:
                 if self.rows.row[0].pos > lim:
                     self.rows.mountrow(self.snake)
-                    lim = random.randint(gameinfo.BLOCKSIZE, 900) + gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS
+                    lim = random.randint(gameinfo.BLOCKSIZE, 900) #+ gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS
                 random.seed(random.random())
-                if random.randint(1, 1000) == random.randint(1, 1000) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
+                if random.randint(1, 700) == random.randint(1, 500) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
                     goody = ob.Goody(random.randint(1, 3))
                     self.g.append(goody)
             else:
@@ -152,16 +167,38 @@ class Maingame:
                                 self.g.remove(h)
                             break
             delay = sdl2.SDL_GetTicks() - C
-            #print(sdl2.SDL_GetTicks() - C)
-            ''' free Surface is needed
-                the display text functions and code
-                is remained to be written. else is done 
-                (means the score attribute in snake 
-                class is created'''
+            #print(delay)
             if delay < 6:
                 sdl2.SDL_Delay(6 - delay)
             self.r.present()
         self.r.w.hide()
+        self.__printscore()
+    
+    def __printscore(self):
+        score = self.snake.score
+        try:
+            f = open("../support/.highscore", "rb+")
+        except FileNotFoundError:
+            f = open("../support/.highscore", "wb+")
+        except:
+            return
+        x = f.read()
+        if x: 
+            hs = int.from_bytes(x, 'big')
+            if score < hs:
+                print("\tUpps!")
+                print("\tscore : " + score.__str__())
+                print("\t(Highscore : %d)" %hs)
+            else:
+                print("\tCongrats!! New Highscore!!!")
+                print("\tscore : " + score.__str__())
+                f.seek(0)
+                f.write(score.to_bytes(20, 'big'))
+        else:
+            f.write(score.to_bytes(20, 'big'))
+            print("\tCongrats!! New Highscore!!!")
+            print("\tscore : " + score.__str__())
+        f.close()
 
 def StartGame():
     sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING)

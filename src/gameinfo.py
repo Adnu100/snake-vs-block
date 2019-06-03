@@ -11,6 +11,7 @@ COLOR_GRID =     {   "black":sdl.Color(0, 0, 0, 0),
                      "white":sdl.Color(255, 255, 255, 0), 
                      "red":sdl.Color(255, 0, 0, 0), 
                      "green":sdl.Color(0, 255, 0, 0),
+                     "yellow":sdl.Color(255, 255, 0, 0),
                      "white-green":sdl.Color(190, 255, 190, 0),
                      "blue":sdl.Color(0, 0, 255, 0),
                      "blue-green":sdl.Color(0, 255, 255, 0),
@@ -23,4 +24,12 @@ BLOCKSTART = [int((BLOCKSIZE * (i - 1)) + BLOCK_GAP * (i - 0.5)) for i in range(
 BLOCKEND = [int(BLOCKSTART[i] + BLOCKSIZE) for i in range(MAX_PER_ROW)]
 SNAKERADIUS = 15
 BONUSRADIUS = 12
+TSPACE_X =  int(SNAKERADIUS - SNAKERADIUS / 5)
+TSPACE_Y = int(SNAKERADIUS - SNAKERADIUS / 3)
+TWIDTH = TSPACE_X * 2
+THEIGHT = TSPACE_Y * 2
+RECTSTART_X = int(BLOCKSIZE / 5)
+RECTSTART_Y = int(BLOCKSIZE - BLOCKSIZE / 3)
+RECTWIDTH = int(BLOCKSIZE * (3 / 5))
+RECTHEIGHT = int(BLOCKSIZE * (1 / 3))
 

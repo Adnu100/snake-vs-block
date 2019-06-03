@@ -37,6 +37,7 @@ class Snake:
 
     def blast(self):
         if self.l != 0:
+            self.score += 100
             self.l -= 1
             self.a.remove(self.head)
             if self.l == 0:
@@ -89,7 +90,6 @@ class Snake:
                         if gameinfo.BLOCKSTART[bk] < self.head[0] < gameinfo.BLOCKEND[bk]:
                             if r.a[bk] != 0:
                                 self.blast()
-                                self.score += 100
                                 r.a[bk] -= 1
                                 return gameinfo.SNAKE_IN_MOTION
                             else:
