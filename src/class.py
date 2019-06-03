@@ -4,16 +4,21 @@ import gameinfo
 import objects_to_display as ob
 import sdl2
 import sdl2.ext as sdl
+import sdl2.sdlttf as ttf
 import random
 import sys
 from math import floor, sqrt
 
 class Gamewindow(sdl.Renderer):
+    YELLOW = sdl2.SDL_Color(255, 255, 0, 0)
+    Rscore = sdl2.SDL_Rect(0, 0, 250, 90)
+
     def __init__(self):
         self.w = sdl.Window("Adnesh's Snake vs Block Game", (gameinfo.WINDOW_WIDTH, gameinfo.WINDOW_HEIGHT))
         self.i = 0
         sdl.Renderer.__init__(self, self.w)
         self.mode = gameinfo.BLOCK_IN_MOTION
+        self.t = ttf.TTF_OpenFont(b"../support/font.ttf", 20)
 
     def __rendercircle(self, xc, yc, r = ob.Snake.RADIUS):
         for x in range(r): 
@@ -68,6 +73,14 @@ class Gamewindow(sdl.Renderer):
                     g.remove(gd)
         else:
             self.mode = snake.advance(br)
+        texttodisplay = "score:" 
+        texttodisplay += "%8d" %snake.score
+        texttodisplay = texttodisplay.encode()
+        sur = ttf.TTF_RenderText_Solid(self.t, texttodisplay, self.YELLOW)
+        tex = sdl2.SDL_CreateTextureFromSurface(self.sdlrenderer, sur)
+        sdl2.SDL_RenderCopy(self.sdlrenderer, tex, self.Rscore, self.Rscore)
+        sdl2.SDL_FreeSurface(sur)
+        sdl2.SDL_DestroyTexture(tex)
         snake.adjust()
 
 class Maingame:
@@ -80,6 +93,8 @@ class Maingame:
         self.r.w.show()
         Running = True
         i = 0
+        scoreholder = sdl2.SDL_Rect(0, 0, 200, 200)
+        score = 0
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
         while Running:
             C = sdl2.SDL_GetTicks()
@@ -109,7 +124,6 @@ class Maingame:
                     elif k == sdl2.SDLK_LEFT and self.snake.head[0] > (0 + 2 * ob.Snake.RADIUS):
                         if self.snake.l != 0:
                             self.snake.move(True)
-            self.r.present()
             if self.rows.row:
                 if self.rows.row[0].pos > lim:
                     self.rows.mountrow(self.snake)
@@ -118,6 +132,8 @@ class Maingame:
                 if random.randint(1, 1000) == random.randint(1, 1000) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
                     goody = ob.Goody(random.randint(1, 3))
                     self.g.append(goody)
+            else:
+                self.rows.mountrow(self.snake)
             if len(sys.argv) > 1 and sys.argv[1] == "-check":
                 if self.snake.l == 1:
                     self.snake.collect(6)
@@ -137,15 +153,23 @@ class Maingame:
                             break
             delay = sdl2.SDL_GetTicks() - C
             #print(sdl2.SDL_GetTicks() - C)
+            ''' free Surface is needed
+                the display text functions and code
+                is remained to be written. else is done 
+                (means the score attribute in snake 
+                class is created'''
             if delay < 6:
                 sdl2.SDL_Delay(6 - delay)
+            self.r.present()
         self.r.w.hide()
 
 def StartGame():
     sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING)
     sdl.init()
+    ttf.TTF_Init()
     Maingame().Start()
     sdl.quit()
+    ttf.TTF_Quit()
     sdl2.SDL_Quit()
 
 if __name__ == '__main__':

@@ -16,6 +16,7 @@ class Snake:
 
     def __init__(self):
         self.l = 1
+        self.score = 0
         self.head = [Snake.INITIAL_X, Snake.INITIAL_Y]
         self.a = [self.head]
         self.s = Snake.SPEED
@@ -28,6 +29,7 @@ class Snake:
         return "Snake [size - " + str(self.l) + "]"
 
     def collect(self, goodies):
+        self.score += (goodies * 10)
         self.l += goodies
         for _ in range(goodies):
             self.__last = [self.__last[0], self.__last[1] + Snake.RADIUS * 2] 
@@ -87,6 +89,7 @@ class Snake:
                         if gameinfo.BLOCKSTART[bk] < self.head[0] < gameinfo.BLOCKEND[bk]:
                             if r.a[bk] != 0:
                                 self.blast()
+                                self.score += 100
                                 r.a[bk] -= 1
                                 return gameinfo.SNAKE_IN_MOTION
                             else:
