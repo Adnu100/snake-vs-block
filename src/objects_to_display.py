@@ -115,8 +115,7 @@ class Row:
         self.pos = 0
         self.passed = False
         self.a = [random.randint(1, lim) if random.randint(1, 10) % 5 != 0 else 0 for _ in range(Row.MAX_PER_ROW)]
-        if free <= Row.MAX_PER_ROW:
-            self.a[free - 1] = 0     
+        self.a[free - 1] = random.randint(1, lim - gameinfo.TOLERANCE)
 
 class BlockRows:
     '''The rows of blocks as an obstruction to snake'''
@@ -129,11 +128,12 @@ class BlockRows:
 
     def __mountfirstrow(self):
         free = random.randint(1, 6)
-        self.row.append(Row(free, 6))
+        self.row.append(Row(free, 6 + gameinfo.TOLERANCE))
+        self.row[0].a[random.randint(0, gameinfo.MAX_PER_ROW - 1)] = 0
 
     def mountrow(self, s):
-        free = random.randint(1, Row.MAX_PER_ROW * 2)
-        self.row.insert(0, Row(free, s.l))
+        free = random.randint(1, Row.MAX_PER_ROW)
+        self.row.insert(0, Row(free, s.l + gameinfo.TOLERANCE))
 
     def deleterow(self):
         self.row.pop()

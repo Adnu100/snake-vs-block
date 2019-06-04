@@ -20,7 +20,7 @@ class Gamewindow(sdl.Renderer):
         self.i = 0
         sdl.Renderer.__init__(self, self.w)
         self.mode = gameinfo.BLOCK_IN_MOTION
-        self.t = ttf.TTF_OpenFont(b"../support/font.ttf", 20)
+        self.t = ttf.TTF_OpenFont(b"../support/font.ttf", 30)
 
     def __rendercircle(self, xc, yc, r = ob.Snake.RADIUS):
         for x in range(r): 
@@ -144,7 +144,7 @@ class Maingame:
                     self.rows.mountrow(self.snake)
                     lim = random.randint(gameinfo.BLOCKSIZE, 900) #+ gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS
                 random.seed(random.random())
-                if random.randint(1, 700) == random.randint(1, 500) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
+                if random.randint(1, 500) == random.randint(1, 500) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
                     goody = ob.Goody(random.randint(1, 3))
                     self.g.append(goody)
             else:
