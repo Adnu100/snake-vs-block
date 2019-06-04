@@ -115,7 +115,7 @@ class Row:
         self.pos = 0
         self.passed = False
         self.a = [random.randint(1, lim) if random.randint(1, 10) % 5 != 0 else 0 for _ in range(Row.MAX_PER_ROW)]
-        self.a[free - 1] = random.randint(1, lim - gameinfo.TOLERANCE)
+        self.a[free - 1] = random.randint(0, lim - gameinfo.TOLERANCE - 1)
 
 class BlockRows:
     '''The rows of blocks as an obstruction to snake'''

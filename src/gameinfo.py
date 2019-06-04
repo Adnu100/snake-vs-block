@@ -3,6 +3,7 @@ import sdl2.ext as sdl
 WINDOW_WIDTH = 700
 WINDOW_HEIGHT = 900
 GAP = 80
+SCORE_DIFF = 2000
 BLOCK_IN_MOTION = 0x0
 SNAKE_IN_MOTION = 0x1
 GAME_OVER = 0x2
@@ -19,6 +20,8 @@ COLOR_GRID =     {   "black":sdl.Color(0, 0, 0, 0),
                  }
 MAX_PER_ROW = 7
 TOLERANCE = 20
+DELAY1 = 6
+DELAY2 = 9
 BLOCK_GAP = 5
 BLOCKSIZE = int(WINDOW_WIDTH / MAX_PER_ROW - BLOCK_GAP)
 BLOCKSTART = [int((BLOCKSIZE * (i - 1)) + BLOCK_GAP * (i - 0.5)) for i in range(1, MAX_PER_ROW + 1)]

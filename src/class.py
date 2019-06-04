@@ -111,6 +111,8 @@ class Maingame:
         scoreholder = sdl2.SDL_Rect(0, 0, 200, 200)
         score = 0
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
+        d = 0
+        delay_ = gameinfo.DELAY1
         while Running:
             C = sdl2.SDL_GetTicks()
             if self.snake.head == None:
@@ -154,7 +156,8 @@ class Maingame:
                     self.snake.collect(6)
             if self.snake.head != None:
                 for h in self.g:
-                    if h.pos != self.snake.head[1]:
+                    #if h.pos != self.snake.head[1]:
+                    if h.pos > (self.snake.head[1] + self.snake.RADIUS) or h.pos < (self.snake.head[1] - self.snake.RADIUS):
                         continue
                     for c in range(len(h.co)):
                         if h.co[c] == self.snake.head[0]:
@@ -166,10 +169,17 @@ class Maingame:
                             if h.num == 0:
                                 self.g.remove(h)
                             break
+            if (self.snake.score - d) > gameinfo.SCORE_DIFF:
+                d = self.snake.score
+                if delay_ == gameinfo.DELAY1:
+                    self.snake.s += 1
+                    delay_ = gameinfo.DELAY2
+                elif delay_ == gameinfo.DELAY2:
+                    delay_ = gameinfo.DELAY1
             delay = sdl2.SDL_GetTicks() - C
             #print(delay)
-            if delay < 6:
-                sdl2.SDL_Delay(6 - delay)
+            if delay < delay_:
+                sdl2.SDL_Delay(delay_ - delay)
             self.r.present()
         self.r.w.hide()
         self.__printscore()
