@@ -223,6 +223,9 @@ def StartGame():
         if "--score" in sys.argv:
             DisplayHighscore()
             return 0
+        if "--help" in sys.argv:
+            DisplayHelp()
+            return 0
     sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING)
     sdl.init()
     ttf.TTF_Init()
