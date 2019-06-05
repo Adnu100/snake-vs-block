@@ -51,6 +51,15 @@ def DisplayHighscore():
     print("Highscore : %d" %x)
     f.close()
 
-
-
+def DisplayHelp():
+    try:
+        f = open("../support/help.txt", "r")
+    except FileNotFoundError:
+        print("Error: The help file not present!")
+        return
+    except:
+        print("Error opening file")
+        return
+    print(f.read(), end = '')
+    f.close()
 

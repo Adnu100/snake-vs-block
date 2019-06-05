@@ -1,0 +1,21 @@
+Snake vs Block Game:
+Created by : Adnesh Anil Dhamangaonkar
+
+A fun game written in Python3 laguage using sdl2 extensions for 
+Python. Use arrow keys to move the snake. Whenever the snake 
+touches a block its length reduces by one. When the length of 
+snake becomes 0, the game ends. Keep the snake moving. Game can 
+be scored by hitting the blocks or collecting goodies.
+
+Usage : ./start.py [options]
+
+options:
+  -h --help		: displays help and exit
+  -s --score		: displays highscore and exit
+  -r --reset		: resets highscore and exit
+  -c --check		: fun mode with never ending snake (snake's
+		  	  length increases as it becomes 1)
+
+EXIT STATUS:
+  0 after successfully returning
+
