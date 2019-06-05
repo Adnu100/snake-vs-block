@@ -207,31 +207,3 @@ class Maingame:
             print("\tscore : " + score.__str__())
         f.close()
 
-def StartGame():
-    # handling command line arguments with an unstandard way 
-    # because there are may few options and they do not
-    # affect time complexity
-    ischeck = False
-    if len(sys.argv) > 1:
-        if "--check" in sys.argv:
-            ischeck = True
-        else:
-            ischeck = False
-        if "--reset" in sys.argv:
-            ResetScore()
-            return 0
-        if "--score" in sys.argv:
-            DisplayHighscore()
-            return 0
-        if "--help" in sys.argv:
-            DisplayHelp()
-            return 0
-    sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING)
-    sdl.init()
-    ttf.TTF_Init()
-    Maingame().Start(ischeck)
-    sdl.quit()
-    ttf.TTF_Quit()
-    sdl2.SDL_Quit()
-    return 0
-

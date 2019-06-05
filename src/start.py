@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import mainclasses
+from supp import *
 
 if __name__ == '__main__':
-    mainclasses.sys.exit(mainclasses.StartGame())
+    sys.exit(StartGame())
