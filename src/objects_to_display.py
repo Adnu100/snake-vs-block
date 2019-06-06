@@ -87,7 +87,7 @@ class Snake:
             if not r.passed:
                 if (self.head[1] - Snake.RADIUS) <= r.pos:
                     for bk in range(len(r.a)):
-                        if gameinfo.BLOCKSTART[bk] < self.head[0] < gameinfo.BLOCKEND[bk]:
+                        if gameinfo.BLOCKSTART_IMG[bk] <= self.head[0] <= gameinfo.BLOCKEND_IMG[bk]:
                             if r.a[bk] != 0:
                                 self.blast()
                                 r.a[bk] -= 1
@@ -150,7 +150,7 @@ class BlockRows:
                     row.passed = True
                     for bk in range(Row.MAX_PER_ROW):
                         if row.a[bk] != 0:
-                            if gameinfo.BLOCKSTART[bk] < snake.head[0] < gameinfo.BLOCKEND[bk]:
+                            if gameinfo.BLOCKSTART_IMG[bk] <= snake.head[0] <= gameinfo.BLOCKEND_IMG[bk]:
                                 snake.blast()
                                 row.a[bk] -=  1
                                 row.passed = False

@@ -5,6 +5,7 @@ import sdl2.ext as sdl
 import sdl2.sdlttf as ttf
 import random
 import sys
+import ctypes
 from math import floor, sqrt
 
 class Gamewindow(sdl.Renderer):
@@ -110,6 +111,7 @@ class Maingame:
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
         d = 0
         delay_ = gameinfo.DELAY1
+        x, y = ctypes.pointer(ctypes.c_int()), ctypes.pointer(ctypes.c_int())
         while Running:
             C = sdl2.SDL_GetTicks()
             if self.snake.head == None:
@@ -152,12 +154,12 @@ class Maingame:
             if ischeck:
                 if self.snake.l == 1:
                     self.snake.collect(6)
-            if self.snake.head != None:
+            if self.snake.head:
                 for h in self.g:
                     if h.pos > (self.snake.head[1] + self.snake.RADIUS) or h.pos < (self.snake.head[1] - self.snake.RADIUS):
                         continue
                     for c in range(len(h.co)):
-                        if h.co[c] == self.snake.head[0]:
+                        if self.snake.head[0] - self.snake.RADIUS < h.co[c] < self.snake.head[0] + self.snake.RADIUS:
                             val = h.val[c]
                             h.co.remove(h.co[c])
                             h.val.remove(h.val[c])
@@ -166,6 +168,14 @@ class Maingame:
                             if h.num == 0:
                                 self.g.remove(h)
                             break
+            sdl2.SDL_GetMouseState(x, y)
+            '''if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and not (self.snake.head[0] + self.snake.RADIUS > x.contents.value > self.snake.head[0] - self.snake.RADIUS):
+                if self.snake.head[0] > x.contents.value:
+                    self.snake.move(True)
+                else:
+                    self.snake.move(False)'''
+            if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and self.snake.head: 
+                self.snake.head[0] = x.contents.value
             if (self.snake.score - d) > gameinfo.SCORE_DIFF:
                 d = self.snake.score
                 if delay_ == gameinfo.DELAY1:
