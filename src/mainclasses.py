@@ -102,7 +102,25 @@ class Maingame:
         self.rows = ob.BlockRows()
         self.g = []
 
-    def Start(self, ischeck):
+    def ResetGame(self):
+        self.snake = ob.Snake()
+        self.rows = ob.BlockRows()
+        self.g = []
+
+    def Start(self, ischeck, repete):
+        self.r.w.show()
+        n = 1 if repete else 0
+        rep = self.StartGame(ischeck) and repete
+        self.__printscore(n)
+        while rep:
+            n += 1
+            self.ResetGame()
+            rep = self.StartGame(ischeck) and repete
+            self.__printscore(n)
+        self.r.w.hide()
+        ttf.TTF_CloseFont(self.r.t)
+
+    def StartGame(self, ischeck):
         self.r.w.show()
         Running = flag = True
         i = 0
@@ -124,6 +142,7 @@ class Maingame:
             for e in events:
                 if e.type == sdl2.SDL_QUIT:
                     Running = False
+                    return False
                     break
                 elif e.type == sdl2.SDL_KEYDOWN and self.snake.head != None:
                     k = e.key.keysym.sym
@@ -147,6 +166,9 @@ class Maingame:
                             mul = 1
                             move = gameinfo.LEFT
                             flag = False
+                    elif k == sdl2.SDLK_q:
+                        return False
+                        break
                 elif e.type == sdl2.SDL_KEYUP:
                     if (e.key.keysym.sym == sdl2.SDLK_RIGHT and move == gameinfo.RIGHT) or (e.key.keysym.sym == sdl2.SDLK_LEFT and move == gameinfo.LEFT):
                         flag = True
@@ -199,10 +221,23 @@ class Maingame:
             if delay < delay_:
                 sdl2.SDL_Delay(delay_ - delay)
             self.r.present()
-        self.r.w.hide()
-        self.__printscore()
+        self.r.clear(gameinfo.COLOR_GRID["black"])
+        self.r.present()
+        while True:
+            events = sdl.get_events()
+            for e in events:
+                if e.type == sdl2.SDL_QUIT:
+                    return False
+                elif e.type == sdl2.SDL_KEYDOWN:
+                    if e.key.keysym.sym == sdl2.SDLK_q:
+                        return False
+                    else:
+                        return True
+                elif e.type == sdl2.SDL_MOUSEBUTTONDOWN:
+                    return True
+        return True
     
-    def __printscore(self):
+    def __printscore(self, gamenumber):
         score = self.snake.score
         try:
             f = open("../support/.highscore", "rb+")
@@ -210,21 +245,24 @@ class Maingame:
             f = open("../support/.highscore", "wb+")
         except:
             return
+        if gamenumber: print("Game " + gamenumber.__str__() + ":", end = '')
         x = f.read()
         if x: 
             hs = int.from_bytes(x, 'big')
-            if score < hs:
-                print("\tUpps!")
+            if score <= hs:
+                if not gamenumber: print("\tUpps!")
                 print("\tscore : " + score.__str__())
-                print("\t(Highscore : %d)" %hs)
+                if not gamenumber: print("\t(Highscore : %d)" %hs)
             else:
-                print("\tCongrats!! New Highscore!!!")
-                print("\tscore : " + score.__str__())
+                if not gamenumber: print("\tCongrats!! New Highscore!!!")
+                if not gamenumber: print("\tscore : " + score.__str__())
+                if gamenumber: print("\tscore : " + score.__str__() + " (New Highscore!)")
                 f.seek(0)
                 f.write(score.to_bytes(20, 'big'))
         else:
             f.write(score.to_bytes(20, 'big'))
-            print("\tCongrats!! New Highscore!!!")
-            print("\tscore : " + score.__str__())
+            if not gamenumber: print("\tCongrats!! New Highscore!!!")
+            if not gamenumber: print("\tscore : " + score.__str__())
+            if gamenumber: print("\tscore : " + score.__str__() + " (New Highscore!)")
         f.close()
 

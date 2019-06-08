@@ -15,6 +15,10 @@ options:
   -r --reset		: resets highscore and exit
   -c --check		: fun mode with never ending snake (snake's
 		  	  length increases as it becomes 1)
+  -R --repete		: starts the game in repete mode
+
+Note : 	To exit from repete mode, close the window anytime or
+	press the q button.
 
 EXIT STATUS:
   0 after successfully returning
