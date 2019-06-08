@@ -104,19 +104,20 @@ class Maingame:
 
     def Start(self, ischeck):
         self.r.w.show()
-        Running = True
+        Running = flag = True
         i = 0
         scoreholder = sdl2.SDL_Rect(0, 0, 200, 200)
-        score = 0
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
+        move = gameinfo.STABLE
         d = 0
         delay_ = gameinfo.DELAY1
+        xco = 0
         x, y = ctypes.pointer(ctypes.c_int()), ctypes.pointer(ctypes.c_int())
         while Running:
             C = sdl2.SDL_GetTicks()
             if self.snake.head == None:
                 Running =  False
-            i += 1
+            #i += 1
             self.r.clear(gameinfo.COLOR_GRID["black"])
             self.r.renderall(self.snake, self.rows, self.g)
             events = sdl.get_events()
@@ -135,22 +136,40 @@ class Maingame:
                                     break
                         Running = True
                     elif k == sdl2.SDLK_RIGHT:
-                        if self.snake.l != 0 and self.snake.head[0] < (gameinfo.WINDOW_WIDTH - 2 * ob.Snake.RADIUS):
-                            self.snake.move(False)
-                    elif k == sdl2.SDLK_LEFT and self.snake.head[0] > (0 + 2 * ob.Snake.RADIUS):
-                        if self.snake.l != 0:
-                            self.snake.move(True)
+                        if flag:
+                            t_stamp = sdl2.SDL_GetTicks()
+                            mul = 1
+                            move = gameinfo.RIGHT
+                            flag = False
+                    elif k == sdl2.SDLK_LEFT:
+                        if flag:
+                            t_stamp = sdl2.SDL_GetTicks()
+                            mul = 1
+                            move = gameinfo.LEFT
+                            flag = False
+                elif e.type == sdl2.SDL_KEYUP:
+                    if (e.key.keysym.sym == sdl2.SDLK_RIGHT and move == gameinfo.RIGHT) or (e.key.keysym.sym == sdl2.SDLK_LEFT and move == gameinfo.LEFT):
+                        flag = True
+                        move = gameinfo.STABLE
+                elif e.type == sdl2.SDL_MOUSEMOTION:
+                    sdl2.SDL_GetMouseState(x, y)
+                    if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and self.snake.head: 
+                        self.snake.head[0] = x.contents.value
+            if move:
+                if sdl2.SDL_GetTicks() - t_stamp > gameinfo.MIN_T_STAMP:
+                    t_stamp = sdl2.SDL_GetTicks()
+                    mul += 1
+                self.snake.move(move, mul)
             if self.rows.row:
                 if self.rows.row[0].pos > lim:
                     self.rows.mountrow(self.snake)
-                    lim = random.randint(gameinfo.BLOCKSIZE, 900) 
+                    lim = random.randint(2 * gameinfo.BLOCKSIZE, 900) 
                 random.seed(random.random())
-                if random.randint(1, 500) == random.randint(1, 500) and self.rows.row[0].pos > gameinfo.BLOCKSIZE:
+                if random.randint(1, 500) == random.randint(1, 500) and self.rows.row[0].pos > gameinfo.BLOCKSIZE + gameinfo.BONUSRADIUS:
                     goody = ob.Goody(random.randint(1, 3))
                     self.g.append(goody)
             else:
                 self.rows.mountrow(self.snake)
-            #if len(sys.argv) > 1 and "--check" in sys.argv:
             if ischeck:
                 if self.snake.l == 1:
                     self.snake.collect(6)
@@ -168,14 +187,6 @@ class Maingame:
                             if h.num == 0:
                                 self.g.remove(h)
                             break
-            sdl2.SDL_GetMouseState(x, y)
-            '''if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and not (self.snake.head[0] + self.snake.RADIUS > x.contents.value > self.snake.head[0] - self.snake.RADIUS):
-                if self.snake.head[0] > x.contents.value:
-                    self.snake.move(True)
-                else:
-                    self.snake.move(False)'''
-            if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and self.snake.head: 
-                self.snake.head[0] = x.contents.value
             if (self.snake.score - d) > gameinfo.SCORE_DIFF:
                 d = self.snake.score
                 if delay_ == gameinfo.DELAY1:

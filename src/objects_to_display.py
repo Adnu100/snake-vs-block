@@ -12,7 +12,6 @@ class Snake:
     INITIAL_Y = int(gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)
     INITIAL_LENGTH = 6
     TOUCH = INITIAL_Y - RADIUS
-    MOVING_SPEED = 2 * RADIUS
 
     def __init__(self):
         self.l = 1
@@ -45,11 +44,13 @@ class Snake:
             else:
                 self.head = self.a[0]
 
-    def move(self, direction):
-        if direction:
-            self.head[0] -= Snake.MOVING_SPEED
+    def move(self, direction, M):
+        if direction == gameinfo.LEFT:
+            if self.l != 0 and self.head[0] > (2 * self.RADIUS):
+                self.head[0] -= (self.s * M)
         else:
-            self.head[0] += Snake.MOVING_SPEED
+            if self.l != 0 and self.head[0] < (gameinfo.WINDOW_WIDTH - 2 * self.RADIUS):
+                self.head[0] += (self.s * M)
 
     def adjust(self):
         for i in range(1, len(self.a)):

@@ -7,7 +7,11 @@ SCORE_DIFF = 2000
 BLOCK_IN_MOTION = 0x0
 SNAKE_IN_MOTION = 0x1
 GAME_OVER = 0x2
+STABLE = 0x0
+LEFT = 0x1
+RIGHT = 0x2
 INITIAL_SPEED = 2 
+MIN_T_STAMP = 200
 COLOR_GRID =     {   "black":sdl.Color(0, 0, 0, 0), 
                      "white":sdl.Color(255, 255, 255, 0), 
                      "red":sdl.Color(255, 0, 0, 0), 
