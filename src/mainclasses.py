@@ -196,6 +196,9 @@ class Maingame:
                 if self.snake.l == 1:
                     self.snake.collect(6)
             if self.snake.head:
+                for r in self.rows.row:
+                    if (self.snake.TOUCH) < r.pos < (self.snake.PASS):
+                        pass
                 for h in self.g:
                     if h.pos > (self.snake.head[1] + self.snake.RADIUS) or h.pos < (self.snake.head[1] - self.snake.RADIUS):
                         continue

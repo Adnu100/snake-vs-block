@@ -12,6 +12,7 @@ class Snake:
     INITIAL_Y = int(gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)
     INITIAL_LENGTH = 6
     TOUCH = INITIAL_Y - RADIUS
+    PASS = INITIAL_Y + RADIUS
 
     def __init__(self):
         self.l = 1
