@@ -7,7 +7,7 @@ touches a block its length reduces by one. When the length of
 snake becomes 0, the game ends. Keep the snake moving. Game can 
 be scored by hitting the blocks or collecting goodies.
 
-Usage : ./start.py [options]
+Usage : ./snake [options]
 
 options:
   -h --help		: displays help and exit
