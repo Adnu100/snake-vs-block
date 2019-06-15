@@ -11,8 +11,8 @@ class Snake:
     INITIAL_X = int(gameinfo.WINDOW_WIDTH / 2)
     INITIAL_Y = int(gameinfo.WINDOW_HEIGHT / 2 + gameinfo.GAP)
     INITIAL_LENGTH = 6
-    TOUCH = INITIAL_Y - RADIUS
-    PASS = INITIAL_Y + RADIUS
+    TOUCH = INITIAL_Y - RADIUS 
+    PASS = INITIAL_Y + RADIUS + gameinfo.BLOCKSIZE 
 
     def __init__(self):
         self.l = 1
@@ -24,6 +24,8 @@ class Snake:
         self.__last = self.head
         self.collect(Snake.INITIAL_LENGTH - 1)
         self.__moverow = 0
+        self.moveability = True
+        self.lasthead = self.head[0]
 
     def __str__(self):
         return "Snake [size - " + str(self.l) + "]"
@@ -46,34 +48,18 @@ class Snake:
                 self.head = self.a[0]
 
     def move(self, direction, M):
-        if direction == gameinfo.LEFT:
-            if self.l != 0 and self.head[0] > (2 * self.RADIUS):
-                self.head[0] -= (self.s * M)
-        else:
-            if self.l != 0 and self.head[0] < (gameinfo.WINDOW_WIDTH - 2 * self.RADIUS):
-                self.head[0] += (self.s * M)
+        if self.moveability:
+            if direction == gameinfo.LEFT:
+                if self.l != 0 and self.head[0] > (2 * self.RADIUS):
+                    self.head[0] -= (self.s * M)
+            else:
+                if self.l != 0 and self.head[0] < (gameinfo.WINDOW_WIDTH - 2 * self.RADIUS):
+                    self.head[0] += (self.s * M)
 
     def adjust(self):
         for i in range(1, len(self.a)):
             self.a[i][0] = self.a[0][0]
-        #self.__moverow += plusmove
-        #checked = 0
-        #i = 0
-        #for i in range(len(self.a) - 1):
-        #    diff = self.a[i][0] - self.a[i + 1][0]
-        #    if diff != 0:
-        #        if diff > 0:
-        #            self.a[i + 1][0] += Snake.RADIUS
-        #        else:
-        #            self.a[i + 1][0] -= Snake.RADIUS
-        #        checked += 1
-        #        if checked == self.__moverow:
-        #            break
-        #if i == len(self.a) - 1:
-        #    self.__moverow -= 1
-        #    if self.__moverow < 0:
-        #        self.__moverow = 0
-
+       
     def advance(self, brs):
         if self.l == 0:
             return gameinfo.GAME_OVER
@@ -87,7 +73,7 @@ class Snake:
             body[1] -= dist
         for r in brs.row:
             if not r.passed:
-                if (self.head[1] - Snake.RADIUS) <= r.pos:
+                if (self.head[1] - self.RADIUS) <= r.pos:
                     for bk in range(len(r.a)):
                         if gameinfo.BLOCKSTART_IMG[bk] <= self.head[0] <= gameinfo.BLOCKEND_IMG[bk]:
                             if r.a[bk] != 0:

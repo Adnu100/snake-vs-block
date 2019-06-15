@@ -123,7 +123,7 @@ class Maingame:
     def StartGame(self, ischeck):
         self.r.w.show()
         Running = flag = True
-        i = 0
+        i_ = 0
         scoreholder = sdl2.SDL_Rect(0, 0, 200, 200)
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
         move = gameinfo.STABLE
@@ -135,7 +135,7 @@ class Maingame:
             C = sdl2.SDL_GetTicks()
             if self.snake.head == None:
                 Running =  False
-            #i += 1
+            i_ += 1
             self.r.clear(gameinfo.COLOR_GRID["black"])
             self.r.renderall(self.snake, self.rows, self.g)
             events = sdl.get_events()
@@ -175,12 +175,25 @@ class Maingame:
                         move = gameinfo.STABLE
                 elif e.type == sdl2.SDL_MOUSEMOTION:
                     sdl2.SDL_GetMouseState(x, y)
-                    if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and self.snake.head: 
-                        self.snake.head[0] = x.contents.value
+                    if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and self.snake.head:
+                        if x.contents.value < self.snake.head[0]:
+                            t_stamp = sdl2.SDL_GetTicks()
+                            mul = 2
+                            move = gameinfo.LEFT
+                        elif x.contents.value > self.snake.head[1]:
+                            t_stamp = sdl2.SDL_GetTicks()
+                            mul = 2
+                            move = gameinfo.RIGHT
+                    #if self.snake.head[0] - self.snake.RADIUS < x.contents.value < self.snake.head[0] + self.snake.RADIUS:
+                        #move = gameinfo.STABLE
+                        #pass
+                        '''self.snake.lasthead = self.snake.head[0]
+                        self.snake.head[0] = x.contents.value'''
             if move:
                 if sdl2.SDL_GetTicks() - t_stamp > gameinfo.MIN_T_STAMP:
                     t_stamp = sdl2.SDL_GetTicks()
                     mul += 1
+                self.snake.lasthead = self.snake.head[0]
                 self.snake.move(move, mul)
             if self.rows.row:
                 if self.rows.row[0].pos > lim:
@@ -197,8 +210,13 @@ class Maingame:
                     self.snake.collect(6)
             if self.snake.head:
                 for r in self.rows.row:
-                    if (self.snake.TOUCH) < r.pos < (self.snake.PASS):
-                        pass
+                    if self.snake.PASS > r.pos > self.snake.head[1] - self.snake.RADIUS:
+                        for bl in range(gameinfo.MAX_PER_ROW):
+                            if gameinfo.BLOCKSTART_IMG[bl] < self.snake.head[0] < gameinfo.BLOCKEND_IMG[bl]:
+                                if r.a[bl] > 0:
+                                    self.snake.head[0] = self.snake.lasthead
+                                    break
+                        break
                 for h in self.g:
                     if h.pos > (self.snake.head[1] + self.snake.RADIUS) or h.pos < (self.snake.head[1] - self.snake.RADIUS):
                         continue
