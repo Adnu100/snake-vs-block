@@ -123,6 +123,7 @@ class Maingame:
     def StartGame(self, ischeck):
         self.r.w.show()
         Running = flag = True
+        mouse = False
         i_ = 0
         scoreholder = sdl2.SDL_Rect(0, 0, 200, 200)
         lim = random.randint(gameinfo.BLOCKSIZE, 900)
@@ -145,6 +146,7 @@ class Maingame:
                     return False
                     break
                 elif e.type == sdl2.SDL_KEYDOWN and self.snake.head != None:
+                    mouse = False
                     k = e.key.keysym.sym
                     if k == sdl2.SDLK_SPACE:
                         while Running:
@@ -176,9 +178,16 @@ class Maingame:
                 elif e.type == sdl2.SDL_MOUSEMOTION:
                     sdl2.SDL_GetMouseState(x, y)
                     if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and self.snake.head:
-                        if self.snake.head[0] - gameinfo.BLOCKSIZE < x.contents.value < self.snake.head[0] + gameinfo.BLOCKSIZE:
+                        if not mouse:
+                            if self.snake.head[0] - gameinfo.BLOCKSIZE < x.contents.value < self.snake.head[0] + gameinfo.BLOCKSIZE:
+                                mouse = True
+                                self.snake.lasthead = self.snake.head[0]
+                                self.snake.head[0] = x.contents.value
+                        else:
                             self.snake.lasthead = self.snake.head[0]
                             self.snake.head[0] = x.contents.value
+                    else:
+                        mouse = False
             if move:
                 if sdl2.SDL_GetTicks() - t_stamp > gameinfo.MIN_T_STAMP:
                     t_stamp = sdl2.SDL_GetTicks()
@@ -205,6 +214,7 @@ class Maingame:
                             if gameinfo.BLOCKSTART_IMG[bl] < self.snake.head[0] < gameinfo.BLOCKEND_IMG[bl]:
                                 if r.a[bl] > 0:
                                     self.snake.head[0] = self.snake.lasthead
+                                    mouse = False
                                     break
                         break
                 for h in self.g:
