@@ -176,19 +176,9 @@ class Maingame:
                 elif e.type == sdl2.SDL_MOUSEMOTION:
                     sdl2.SDL_GetMouseState(x, y)
                     if self.snake.RADIUS < x.contents.value < gameinfo.WINDOW_WIDTH - self.snake.RADIUS and self.snake.head:
-                        if x.contents.value < self.snake.head[0]:
-                            t_stamp = sdl2.SDL_GetTicks()
-                            mul = 2
-                            move = gameinfo.LEFT
-                        elif x.contents.value > self.snake.head[1]:
-                            t_stamp = sdl2.SDL_GetTicks()
-                            mul = 2
-                            move = gameinfo.RIGHT
-                    #if self.snake.head[0] - self.snake.RADIUS < x.contents.value < self.snake.head[0] + self.snake.RADIUS:
-                        #move = gameinfo.STABLE
-                        #pass
-                        '''self.snake.lasthead = self.snake.head[0]
-                        self.snake.head[0] = x.contents.value'''
+                        if self.snake.head[0] - gameinfo.BLOCKSIZE < x.contents.value < self.snake.head[0] + gameinfo.BLOCKSIZE:
+                            self.snake.lasthead = self.snake.head[0]
+                            self.snake.head[0] = x.contents.value
             if move:
                 if sdl2.SDL_GetTicks() - t_stamp > gameinfo.MIN_T_STAMP:
                     t_stamp = sdl2.SDL_GetTicks()
