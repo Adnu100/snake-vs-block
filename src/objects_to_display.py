@@ -57,8 +57,8 @@ class Snake:
                     self.head[0] += (self.s * M)
 
     def adjust(self):
-        for i in range(1, len(self.a)):
-            self.a[i][0] = self.a[0][0]
+        for i in range(0, len(self.a) - 1)[::-1]:
+            self.a[i + 1][0] = self.a[i][0]
        
     def advance(self, brs):
         if self.l == 0:
