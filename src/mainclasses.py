@@ -210,12 +210,6 @@ class Maingame:
                             self.snake.head[0] = x.contents.value
                     else:
                         mouse = False
-            if move:
-                if sdl2.SDL_GetTicks() - t_stamp > gameinfo.MIN_T_STAMP:
-                    t_stamp = sdl2.SDL_GetTicks()
-                    mul += 1
-                self.snake.lasthead = self.snake.head[0]
-                self.snake.move(move, mul)
             if self.rows.row:
                 if self.rows.row[0].pos > lim:
                     self.rows.mountrow(self.snake)
@@ -230,6 +224,12 @@ class Maingame:
                 if self.snake.l == 1:
                     self.snake.collect(6)
             if self.snake.head:
+                if move:
+                    if sdl2.SDL_GetTicks() - t_stamp > gameinfo.MIN_T_STAMP:
+                        t_stamp = sdl2.SDL_GetTicks()
+                        mul += 1
+                    self.snake.lasthead = self.snake.head[0]
+                    self.snake.move(move, mul)
                 for r in self.rows.row:
                     if self.snake.PASS > r.pos > self.snake.head[1] - self.snake.RADIUS:
                         for bl in range(gameinfo.MAX_PER_ROW):
