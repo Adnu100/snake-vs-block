@@ -5,10 +5,11 @@ A snake vs Block Game written in Python3 using PySDL2 module and sdl2 extensions
 ## Getting Started
 Clone the project into your pc. Open in terminal
 
-***Some parameters like window height, width, frame rate, snake orbs radius etc can be changed by changing the respective parameters in `src/gameinfo.py`. 
+***Some parameters like window height, width, frame rate, snake orbs radius etc can be changed by changing the respective parameters in `src/gameinfo.py` ***
 
-Note that some changes may cause the game to misbehave
-__All the changes are not flexible__***
+***Note that some changes may cause the game to misbehave***
+
+***__All the changes are not flexible__***
 
 ### Prerequisites
 This game requires Python3 along with the PySDL2 modules installed on your system. To install Python3, enter the command
