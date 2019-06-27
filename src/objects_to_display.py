@@ -34,7 +34,7 @@ class Snake:
         self.score += (goodies * 10)
         self.l += goodies
         for _ in range(goodies):
-            self.__last = [self.__last[0], self.__last[1] + Snake.RADIUS * 2] 
+            self.__last = [self.__last[0], self.__last[1] + self.DIAMETER] 
             self.a.append(self.__last)
 
     def blast(self):
