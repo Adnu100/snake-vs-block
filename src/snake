@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 
+#edit the above line if it does not work
+#the path to python3 can be known by
+#typing `which python3` on terminal
+
 from supp import *
+
+'''
+calling StartGame() function and exiting with the return code
+0 is returned if all executed properly
+'''
 
 if __name__ == '__main__':
     sys.exit(StartGame())

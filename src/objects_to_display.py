@@ -1,3 +1,7 @@
+'''
+all the objects which are displayed on the screen are defined here
+along with their methods
+'''
 import gameinfo
 import random
 from math import ceil
@@ -27,10 +31,8 @@ class Snake:
         self.moveability = True
         self.lasthead = self.head[0]
 
-    def __str__(self):
-        return "Snake [size - " + str(self.l) + "]"
-
     def collect(self, goodies):
+        '''called when snake takes the random bonus appeared on screen'''
         self.score += (goodies * 10)
         self.l += goodies
         for _ in range(goodies):
@@ -38,6 +40,12 @@ class Snake:
             self.a.append(self.__last)
 
     def blast(self):
+        '''
+        called when snake touches any block the number on block 
+        reduces by one and the snake head blasts making the 
+        next body head when the snake length becomes 0, 
+        the head becomes None
+        '''
         if self.l != 0:
             self.score += 100
             self.l -= 1
@@ -48,6 +56,10 @@ class Snake:
                 self.head = self.a[0]
 
     def move(self, direction, M):
+        '''
+        moves the head to appropriate direction
+        only moves if the moveability is True
+        '''
         if self.moveability:
             if direction == gameinfo.LEFT:
                 if self.l != 0 and self.head[0] > (2 * self.RADIUS):
@@ -57,10 +69,22 @@ class Snake:
                     self.head[0] += (self.s * M)
 
     def adjust(self):
+        '''
+        adjusts the snake to stable form
+        this function needs to be called with each iteration
+        of the main loop
+        when the snake head moves, this function attempts to 
+        make the snake linear (Y-axis) again
+        '''
         for i in range(0, len(self.a) - 1)[::-1]:
             self.a[i + 1][0] = self.a[i][0]
        
     def advance(self, brs):
+        '''
+        called when the game is in SNAKE_IN_MOTION mode
+        it moves the snake up and the distance by which it moves
+        is defined by the speed of the snake
+        '''
         if self.l == 0:
             return gameinfo.GAME_OVER
         mode = gameinfo.SNAKE_IN_MOTION
@@ -111,22 +135,27 @@ class BlockRows:
         self.row = []
         self.__mountfirstrow()
 
-    def __str__(self):
-        return "A block row"
-
     def __mountfirstrow(self):
+        '''called when initiating, mounts the first row of blocks'''
         free = random.randint(1, 6)
         self.row.append(Row(free, 6 + gameinfo.TOLERANCE))
         self.row[0].a[random.randint(0, gameinfo.MAX_PER_ROW - 1)] = 0
 
     def mountrow(self, s):
+        '''called whenever a row of blocks needs to be mounted'''
         free = random.randint(1, Row.MAX_PER_ROW)
         self.row.insert(0, Row(free, s.l + gameinfo.TOLERANCE))
 
     def deleterow(self):
+        '''deletes the oldest row'''
         self.row.pop()
 
     def advance(self, snake):
+        '''
+        called when the game is in BLOCK_IN_MOTION mode
+        all the block rows move with the speed Snake.s
+        in downward direction
+        '''
         if snake.l == 0:
             return gameinfo.GAME_OVER
         for row in self.row:

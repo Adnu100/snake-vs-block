@@ -1,3 +1,10 @@
+'''
+All the game parameters are defined here.
+You may change the values of some of these 
+but customisation is not much flexible
+Default values prefered always
+'''
+
 import sdl2.ext as sdl
 
 WINDOW_WIDTH = 700

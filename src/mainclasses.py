@@ -1,3 +1,8 @@
+'''
+two main classes Gamewindow() and Maingame() which actually
+cause the graphics of the game
+'''
+
 import gameinfo
 import objects_to_display as ob
 import sdl2
@@ -9,6 +14,10 @@ import ctypes
 from math import floor, sqrt
 
 class Gamewindow(sdl.Renderer):
+    '''
+    This class contains the window and renderer for the game
+    with methods to draw the objects in objects_to_display module
+    '''
     YELLOW = sdl2.SDL_Color(255, 255, 0, 0)
     WHITE = sdl2.SDL_Color(255, 255, 255, 0)
     BLACK = sdl2.SDL_Color(0, 0, 0, 0)
@@ -21,12 +30,14 @@ class Gamewindow(sdl.Renderer):
         self.t = ttf.TTF_OpenFont(b"../support/font.ttf", 30)
 
     def __rendercircle(self, xc, yc, r = ob.Snake.RADIUS):
+        '''function to draw circle of radius and XY coordinates'''
         for x in range(r): 
             y = floor(sqrt(r ** 2 - x ** 2))
             self.draw_line((xc + x, yc + y, xc + x, yc - y))
             self.draw_line((xc - x, yc + y, xc - x, yc - y))
 
     def __renderblock(self, number, val, y):
+        '''drawing blocks of color according the strength of blocks'''
         if 0 < val < 10:
             self.color = gameinfo.COLOR_GRID["white-green"]
         elif 9 < val < 20:
@@ -48,12 +59,14 @@ class Gamewindow(sdl.Renderer):
         sdl2.SDL_DestroyTexture(tex)
 
     def __renderblockrows(self, br):
+        '''draw all the blocks in rows'''
         for row in br.row:
             for b in range(ob.Row.MAX_PER_ROW):
                 if row.a[b] != 0:
                     self.__renderblock(b, row.a[b], row.pos)
 
     def rendersnake(self, snake):
+        '''drawing snake object'''
         if snake.l > 0:
             self.color = gameinfo.COLOR_GRID["red-blue"]
             for i in range(0, len(snake.a)):
@@ -68,12 +81,17 @@ class Gamewindow(sdl.Renderer):
             sdl2.SDL_DestroyTexture(tex)
 
     def rendergoodies(self, g_row):
+        '''draw the goodies in game'''
         self.color = sdl.Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 0)
         for r in g_row:
             for g in range(r.num):
                 self.__rendercircle(r.co[g], r.pos, gameinfo.BONUSRADIUS)
            
     def renderall(self, snake, br, g):
+        '''
+        a function which calls all other functions 
+        to render the objects in the game
+        '''
         self.__renderblockrows(br)
         self.rendersnake(snake)
         self.rendergoodies(g)
@@ -96,6 +114,7 @@ class Gamewindow(sdl.Renderer):
         snake.adjust()
 
 class Maingame:
+    '''all the game variables contained in this class'''
     def __init__(self):
         self.r = Gamewindow()
         self.snake = ob.Snake()
@@ -103,11 +122,13 @@ class Maingame:
         self.g = []
 
     def ResetGame(self):
+        '''resets the game'''
         self.snake = ob.Snake()
         self.rows = ob.BlockRows()
         self.g = []
 
     def Start(self, ischeck, repete):
+        '''function which calls the starting function of the game'''
         self.r.w.show()
         n = 1 if repete else 0
         rep = self.StartGame(ischeck) and repete
@@ -121,6 +142,7 @@ class Maingame:
         ttf.TTF_CloseFont(self.r.t)
 
     def StartGame(self, ischeck):
+        '''starting the actual game'''
         self.r.w.show()
         Running = flag = True
         mouse = False
@@ -259,6 +281,12 @@ class Maingame:
         return True
     
     def __printscore(self, gamenumber):
+        '''
+        prints the score of current game on the terminal window
+        also, compares the score with the highscore and
+        updates accordingly
+        prints the message according to the score in the game
+        '''
         score = self.snake.score
         try:
             f = open("../support/.highscore", "rb+")

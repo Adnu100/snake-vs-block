@@ -1,6 +1,15 @@
+'''main functions required in backend are defined here'''
+
 from mainclasses import *
 
 def StartGame():
+    '''
+    The function which handles the command line arguments,
+    initialises SDL2 and TTF, initiates the MainGame class 
+    and invokes its Start() function
+    after that, it closes the SDL2 and TTF
+    returns 0 after successful execution
+    '''
     # handling command line arguments with an unstandard way 
     # because there are may few options and they do not
     # affect time complexity
@@ -31,6 +40,7 @@ def StartGame():
     return 0
 
 def ResetScore():
+    '''resets the highscore'''
     try:
         f = open("../support/.highscore", "rb+")
     except FileNotFoundError:
@@ -42,6 +52,7 @@ def ResetScore():
     f.close()
 
 def DisplayHighscore():
+    '''displays the highscore on terminal'''
     try:
         f = open("../support/.highscore", "rb+")
     except FileNotFoundError:
@@ -54,6 +65,10 @@ def DisplayHighscore():
     f.close()
 
 def DisplayHelp():
+    '''
+    displays help on the terminal
+    (it prints the help.txt file in support directory)
+    '''
     try:
         f = open("../support/help.txt", "r")
     except FileNotFoundError:
