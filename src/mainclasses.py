@@ -280,7 +280,7 @@ class Maingame:
                     return True
         return True
     
-    def __printscore(self, gamenumber):
+    def __print_update_score(self, gamenumber):
         '''
         prints the score of current game on the terminal window
         also, compares the score with the highscore and

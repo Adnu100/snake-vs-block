@@ -10,9 +10,6 @@ def StartGame():
     after that, it closes the SDL2 and TTF
     returns 0 after successful execution
     '''
-    # handling command line arguments with an unstandard way 
-    # because there are may few options and they do not
-    # affect time complexity
     repete = ischeck = False
     if len(sys.argv) > 1:
         if "--check" in sys.argv or "-c" in sys.argv:
