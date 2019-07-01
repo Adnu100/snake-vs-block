@@ -132,12 +132,12 @@ class Maingame:
         self.r.w.show()
         n = 1 if repete else 0
         rep = self.StartGame(ischeck) and repete
-        self.__printscore(n)
+        self.__print_update_score(n)
         while rep:
             n += 1
             self.ResetGame()
             rep = self.StartGame(ischeck) and repete
-            self.__printscore(n)
+            self.__print_update_score(n)
         self.r.w.hide()
         ttf.TTF_CloseFont(self.r.t)
 
@@ -260,7 +260,7 @@ class Maingame:
                 elif delay_ == gameinfo.DELAY2:
                     delay_ = gameinfo.DELAY1
             delay = sdl2.SDL_GetTicks() - C
-            #print(delay)
+            print(delay)
             if delay < delay_:
                 sdl2.SDL_Delay(delay_ - delay)
             self.r.present()
