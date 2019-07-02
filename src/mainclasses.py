@@ -260,7 +260,6 @@ class Maingame:
                 elif delay_ == gameinfo.DELAY2:
                     delay_ = gameinfo.DELAY1
             delay = sdl2.SDL_GetTicks() - C
-            print(delay)
             if delay < delay_:
                 sdl2.SDL_Delay(delay_ - delay)
             self.r.present()
