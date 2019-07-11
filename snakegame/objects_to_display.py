@@ -2,7 +2,7 @@
 all the objects which are displayed on the screen are defined here
 along with their methods
 '''
-import gameinfo
+from . import gameinfo
 import random
 from math import ceil
 

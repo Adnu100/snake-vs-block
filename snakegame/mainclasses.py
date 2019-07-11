@@ -3,8 +3,8 @@ two main classes Gamewindow() and Maingame() which actually
 cause the graphics of the game
 '''
 
-import gameinfo
-import objects_to_display as ob
+from . import gameinfo
+from . import objects_to_display as ob
 import sdl2
 import sdl2.ext as sdl
 import sdl2.sdlttf as ttf
@@ -27,7 +27,7 @@ class Gamewindow(sdl.Renderer):
         self.w = sdl.Window("Adnesh's Snake vs Block Game", (gameinfo.WINDOW_WIDTH, gameinfo.WINDOW_HEIGHT))
         sdl.Renderer.__init__(self, self.w)
         self.mode = gameinfo.BLOCK_IN_MOTION
-        self.t = ttf.TTF_OpenFont(b"../support/font.ttf", 30)
+        self.t = ttf.TTF_OpenFont(b"support/font.ttf", 30)
 
     def __rendercircle(self, xc, yc, r = ob.Snake.RADIUS):
         '''function to draw circle of radius and XY coordinates'''
@@ -288,9 +288,9 @@ class Maingame:
         '''
         score = self.snake.score
         try:
-            f = open("../support/.highscore", "rb+")
+            f = open("support/.highscore", "rb+")
         except FileNotFoundError:
-            f = open("../support/.highscore", "wb+")
+            f = open("support/.highscore", "wb+")
         except:
             return
         if gamenumber: print("Game " + gamenumber.__str__() + ":", end = '')

@@ -1,6 +1,6 @@
 '''main functions required in backend are defined here'''
 
-from mainclasses import *
+from .mainclasses import *
 
 def StartGame():
     '''
@@ -39,9 +39,9 @@ def StartGame():
 def ResetScore():
     '''resets the highscore'''
     try:
-        f = open("../support/.highscore", "rb+")
+        f = open("support/.highscore", "rb+")
     except FileNotFoundError:
-        f = open("../support/.highscore", "wb+")
+        f = open("support/.highscore", "wb+")
     except:
         return
     f.seek(0)       # for safety
@@ -51,9 +51,9 @@ def ResetScore():
 def DisplayHighscore():
     '''displays the highscore on terminal'''
     try:
-        f = open("../support/.highscore", "rb+")
+        f = open("support/.highscore", "rb+")
     except FileNotFoundError:
-        f = open("../support/.highscore", "wb+")
+        f = open("support/.highscore", "wb+")
     except:
         return
     x = f.read()
@@ -67,7 +67,7 @@ def DisplayHelp():
     (it prints the help.txt file in support directory)
     '''
     try:
-        f = open("../support/help.txt", "r")
+        f = open("support/help.txt", "r")
     except FileNotFoundError:
         print("Error: The help file not present!")
         return
